@@ -6,13 +6,20 @@ import { auth } from './firebase/firebase';
 
 function App() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       setUser(authUser);
+      setLoading(false);  // Stop loading once the check completes
     });
+
     return () => unsubscribe();
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;  // Simple loading screen to prevent flickering
+  }
 
   return (
     <Router>

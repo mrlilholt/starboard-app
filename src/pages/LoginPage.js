@@ -27,7 +27,7 @@ function LoginPage() {
       }
 
       alert(`Welcome, ${user.displayName}!`);
-      navigate('/dashboard');  // Redirect to dashboard
+      navigate('/dashboard');
     } catch (error) {
       console.error('Login Failed:', error.message);
       alert('Failed to sign in. Please try again.');
@@ -35,11 +35,44 @@ function LoginPage() {
   };
 
   return (
-    <div>
-      <h1>Login Page</h1>
-      <button onClick={handleLogin}>Login with Google</button>
+    <div style={styles.container}>
+      <h1 style={styles.title}>Welcome to Starboard</h1>
+      <p style={styles.subtitle}>Sign in to start ranking your kids!</p>
+      <button onClick={handleLogin} style={styles.button}>
+        Login with Google 🚀
+      </button>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    backgroundColor: '#121212',
+    color: '#fff',
+  },
+  title: {
+    fontSize: '3rem',
+    marginBottom: '0.5rem',
+  },
+  subtitle: {
+    fontSize: '1.2rem',
+    marginBottom: '2rem',
+  },
+  button: {
+    padding: '15px 30px',
+    fontSize: '1rem',
+    backgroundColor: '#1DB954',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '30px',
+    cursor: 'pointer',
+    boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
+  },
+};
 
 export default LoginPage;

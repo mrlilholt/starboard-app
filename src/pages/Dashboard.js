@@ -1,60 +1,43 @@
-import { useEffect, useState } from 'react';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { auth } from '../firebase/firebase';
-
-const db = getFirestore();
-
 function Dashboard() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
-      if (authUser) {
-        const userRef = doc(db, 'users', authUser.uid);
-        const docSnap = await getDoc(userRef);
-
-        if (docSnap.exists()) {
-          setUser(docSnap.data());
-        }
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
   return (
-    <div>
-      {user ? (
-        <div>
-          <h1>Welcome, {user.displayName}!</h1>
-          <img src={user.photoURL} alt="Profile" style={{ borderRadius: '50%', width: '80px' }} />
-          <p>Email: {user.email}</p>
-          <p>Role: {user.role}</p>
-        </div>
-      ) : (
-        <p>Loading user info...</p>
-      )}
+    <div style={styles.container}>
+      <h1 style={styles.title}>Dashboard</h1>
+      <p style={styles.subtitle}>Track your family's star rankings here.</p>
 
-      <h1>Dashboard</h1>
-      <p>Choose a child, category, and give them stars!</p>
-      <form>
-        <select>
-          <option>Mira</option>
-          <option>Shea</option>
-        </select>
-        <select>
-          <option>Kindness</option>
-          <option>Chores</option>
-        </select>
-        <div>
-          <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
-        </div>
-        <button type="submit">Give Stars!</button>
-      </form>
+      <div style={styles.card}>
+        <h2>Mira</h2>
+        <p>⭐ ⭐ ⭐ ⭐ ⭐</p>
+      </div>
+
+      <div style={styles.card}>
+        <h2>Shay</h2>
+        <p>⭐ ⭐ ⭐ ⭐</p>
+      </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    padding: '50px',
+    backgroundColor: '#1E1E1E',
+    color: '#fff',
+    minHeight: '100vh',
+  },
+  title: {
+    fontSize: '2.5rem',
+    marginBottom: '1rem',
+  },
+  subtitle: {
+    fontSize: '1.2rem',
+    marginBottom: '2rem',
+  },
+  card: {
+    padding: '20px',
+    backgroundColor: '#333',
+    borderRadius: '12px',
+    margin: '20px 0',
+  },
+};
 
 export default Dashboard;
