@@ -10,7 +10,7 @@ function LoginPage() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      console.log('User Logged In:', user);  // Confirm login
+      console.log('User Logged In:', user);
       const userRef = doc(db, 'users', user.uid);
       const docSnap = await getDoc(userRef);
 
@@ -25,10 +25,10 @@ function LoginPage() {
       }
 
       console.log('Redirecting to dashboard...');
-      window.location.href = '/dashboard';  // Force redirect
+      window.location.href = '/dashboard';  // Force redirect after login
     } catch (error) {
-      console.error('Login Failed:', error.message);
-      alert('Failed to sign in. Please try again.');
+      console.error('Full Error:', error);  // Log full error for debugging
+      alert(`Failed to sign in. Reason: ${error.message}`);  // Show error to user
     }
   };
 
