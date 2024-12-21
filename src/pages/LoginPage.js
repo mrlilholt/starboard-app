@@ -30,3 +30,5 @@ const handleLogin = async () => {
     alert('Failed to sign in. Please try again.');
   }
 };
+
+export default LoginPage;
