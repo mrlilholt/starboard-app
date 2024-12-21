@@ -1,0 +1,41 @@
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1e1e2f, #3a3a57);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .app-container {
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+  }
+  
+  .card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 20px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(15px);
+  }
+  
+  .glow-effect {
+    box-shadow: 0 0 60px 20px rgba(120, 255, 214, 0.6);
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 40px rgba(120, 255, 214, 0.6);
+    }
+    to {
+      box-shadow: 0 0 80px rgba(180, 250, 255, 0.8);
+    }
+  }
+  

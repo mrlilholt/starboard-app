@@ -18,7 +18,7 @@ function StarRating({ childName, uid }) {
         childName
       })
     });
-    alert(`${value} stars awarded to ${childName}!`);
+    alert(`${value} unicorns awarded to ${childName}!`);
   };
 
   const getFillPercentage = (index) => {
@@ -29,23 +29,23 @@ function StarRating({ childName, uid }) {
   return (
     <div style={styles.ratingContainer}>
       {[...Array(5)].map((_, index) => {
-        const starValue = index + 1;
+        const unicornValue = index + 1;
 
         return (
           <div
             key={index}
-            onClick={() => handleClick(starValue)}
+            onClick={() => handleClick(unicornValue)}
             onMouseMove={(e) => {
               const percent = (e.nativeEvent.offsetX / e.target.offsetWidth) * 100;
               setHover(index + percent / 100);
             }}
             onMouseLeave={() => setHover(0)}
             style={{
-              ...styles.star,
-              background: `linear-gradient(90deg, #FFD700 ${getFillPercentage(index)}%, #ccc ${getFillPercentage(index)}%)`,
+              ...styles.unicorn,
+              background: `linear-gradient(90deg, #FF69B4 ${getFillPercentage(index)}%, #ccc ${getFillPercentage(index)}%)`,
             }}
           >
-            ★
+            🦄
           </div>
         );
       })}
@@ -61,7 +61,7 @@ const styles = {
     fontSize: '3rem',
     cursor: 'pointer',
   },
-  star: {
+  unicorn: {
     display: 'inline-block',
     width: '50px',
     height: '50px',

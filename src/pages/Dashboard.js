@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { getFirestore, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 
+const db = getFirestore();
+
 function StarRating({ childName, uid }) {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
