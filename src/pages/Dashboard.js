@@ -4,26 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import StarRating from '../components/StarRating';
 
 function Dashboard() {
-  return (
-    <div style={styles.container}>
-      <h1>Dashboard</h1>
-      <p>Rate your kids with precision!</p>
-
-      <div style={styles.card}>
-        <h2>Mira</h2>
-        <StarRating childName="Mira" uid="mira-uid" />
-      </div>
-
-      <div style={styles.card}>
-        <h2>Shay</h2>
-        <StarRating childName="Shea" uid="shea-uid" />
-      </div>
-    </div>
-  );
-}
-
-
-function Dashboard() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -37,16 +17,16 @@ function Dashboard() {
         <h1>Dashboard</h1>
         <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
       </div>
-      <p style={styles.subtitle}>Track your family's star rankings here.</p>
+      <p style={styles.subtitle}>Rate your kids with precision!</p>
 
       <div style={styles.card}>
         <h2>Mira</h2>
-        <p>⭐ ⭐ ⭐ ⭐ ⭐</p>
+        <StarRating childName="Mira" uid="mira-uid" />
       </div>
 
       <div style={styles.card}>
         <h2>Shay</h2>
-        <p>⭐ ⭐ ⭐ ⭐</p>
+        <StarRating childName="Shay" uid="shay-uid" />
       </div>
     </div>
   );
@@ -72,14 +52,6 @@ const styles = {
     borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '1rem',
-  },
-  title: {
-    fontSize: '2.5rem',
-    marginBottom: '1rem',
-  },
-  subtitle: {
-    fontSize: '1.2rem',
-    marginBottom: '2rem',
   },
   card: {
     padding: '20px',
