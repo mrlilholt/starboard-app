@@ -1,34 +1,43 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
-import { useEffect, useState } from 'react';
+import LoginPage from './pages/LoginPage';
 import { auth } from './firebase/firebase';
+import { useEffect, useState } from 'react';
 
-function App() {
+function PrivateRoute({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((authUser) => {
-      setUser(authUser);
-      setLoading(false);  // Stop loading once the check completes
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+      setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;  // Simple loading screen to prevent flickering
-  }
+  if (loading) return <div>Loading...</div>;
 
+  return user ? children : <Navigate to="/" />;
+}
+
+function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={user ? <Navigate to="/dashboard" /> : <LoginPage />} />
-        <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/" />} />
+        <Route path="/" element={<LoginPage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
