@@ -1,6 +1,27 @@
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
 import { useNavigate } from 'react-router-dom';
+import StarRating from '../components/StarRating';
+
+function Dashboard() {
+  return (
+    <div style={styles.container}>
+      <h1>Dashboard</h1>
+      <p>Rate your kids with precision!</p>
+
+      <div style={styles.card}>
+        <h2>Mira</h2>
+        <StarRating childName="Mira" uid="mira-uid" />
+      </div>
+
+      <div style={styles.card}>
+        <h2>Shay</h2>
+        <StarRating childName="Shea" uid="shea-uid" />
+      </div>
+    </div>
+  );
+}
+
 
 function Dashboard() {
   const navigate = useNavigate();

@@ -5,40 +5,70 @@ const db = getFirestore();
 
 function StarRating({ childName, uid }) {
   const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
 
-  const handleRating = async (stars) => {
-    setRating(stars);
+  const handleClick = async (value) => {
+    setRating(value);
+
     const childRef = doc(db, 'ratings', uid);
-
     await updateDoc(childRef, {
       ratings: arrayUnion({
-        stars,
+        stars: value,
         date: new Date().toISOString(),
         childName
       })
     });
+    alert(`${value} stars awarded to ${childName}!`);
+  };
 
-    alert(`${stars} stars awarded to ${childName}!`);
+  const getFillPercentage = (index) => {
+    const fill = hover || rating;
+    return Math.min(Math.max((fill - index) * 100, 0), 100);
   };
 
   return (
-    <div>
-      <h3>{childName}</h3>
-      {[...Array(5)].map((_, index) => (
-        <span
-          key={index}
-          onClick={() => handleRating(index + 1)}
-          style={{
-            cursor: 'pointer',
-            fontSize: '2rem',
-            color: index < rating ? 'gold' : 'gray'
-          }}
-        >
-          ★
-        </span>
-      ))}
+    <div style={styles.ratingContainer}>
+      {[...Array(5)].map((_, index) => {
+        const starValue = index + 1;
+
+        return (
+          <div
+            key={index}
+            onClick={() => handleClick(starValue)}
+            onMouseMove={(e) => {
+              const percent = (e.nativeEvent.offsetX / e.target.offsetWidth) * 100;
+              setHover(index + percent / 100);
+            }}
+            onMouseLeave={() => setHover(0)}
+            style={{
+              ...styles.star,
+              background: `linear-gradient(90deg, #FFD700 ${getFillPercentage(index)}%, #ccc ${getFillPercentage(index)}%)`,
+            }}
+          >
+            ★
+          </div>
+        );
+      })}
     </div>
   );
 }
+
+const styles = {
+  ratingContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '10px',
+    fontSize: '3rem',
+    cursor: 'pointer',
+  },
+  star: {
+    display: 'inline-block',
+    width: '50px',
+    height: '50px',
+    backgroundClip: 'text',
+    color: 'transparent',
+    WebkitBackgroundClip: 'text',
+  }
+};
 
 export default StarRating;
