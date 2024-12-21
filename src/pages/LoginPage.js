@@ -1,19 +1,16 @@
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../firebase/firebase';
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
 
 const db = getFirestore();
 
 function LoginPage() {
-  const navigate = useNavigate();
-
   const handleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      console.log('User Logged In:', user);  // Check if this logs
+      console.log('User Logged In:', user);  // Confirm login
       const userRef = doc(db, 'users', user.uid);
       const docSnap = await getDoc(userRef);
 
@@ -27,8 +24,8 @@ function LoginPage() {
         });
       }
 
-      console.log('Redirecting to dashboard...');  // Ensure this fires
-      navigate('/dashboard');
+      console.log('Redirecting to dashboard...');
+      window.location.href = '/dashboard';  // Force redirect
     } catch (error) {
       console.error('Login Failed:', error.message);
       alert('Failed to sign in. Please try again.');
