@@ -1,7 +1,21 @@
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase/firebase';
+import { useNavigate } from 'react-router-dom';
+
 function Dashboard() {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    navigate('/');  // Redirect to login page after logout
+  };
+
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>Dashboard</h1>
+      <div style={styles.header}>
+        <h1>Dashboard</h1>
+        <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
+      </div>
       <p style={styles.subtitle}>Track your family's star rankings here.</p>
 
       <div style={styles.card}>
@@ -23,6 +37,20 @@ const styles = {
     backgroundColor: '#1E1E1E',
     color: '#fff',
     minHeight: '100vh',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  logoutButton: {
+    padding: '10px 20px',
+    backgroundColor: '#E63946',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '1rem',
   },
   title: {
     fontSize: '2.5rem',
