@@ -1,24 +1,32 @@
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../firebase/firebase';
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 
-function LoginPage() {
-  const handleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      console.log('User Info:', result.user);
-      alert(`Welcome, ${result.user.displayName}!`);
-    } catch (error) {
-      console.error('Login Failed:', error.message);
+const db = getFirestore();
+
+const handleLogin = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    // Check if user already exists in Firestore
+    const userRef = doc(db, 'users', user.uid);
+    const docSnap = await getDoc(userRef);
+
+    if (!docSnap.exists()) {
+      // If not, create a new user document
+      await setDoc(userRef, {
+        displayName: user.displayName,
+        email: user.email,
+        role: 'parent',  // Default role
+        photoURL: user.photoURL,
+        uid: user.uid
+      });
     }
-  };
 
-  return (
-    <div>
-      <h1>Welcome to Starboard!</h1>
-      <p>Sign in to start ranking!</p>
-      <button onClick={handleLogin}>Login with Google</button>
-    </div>
-  );
-}
-
-export default LoginPage;
+    alert(`Welcome, ${user.displayName}!`);
+  } catch (error) {
+    console.error('Login Failed:', error.message);
+    alert('Failed to sign in. Please try again.');
+  }
+};
