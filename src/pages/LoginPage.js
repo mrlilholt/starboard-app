@@ -6,14 +6,14 @@ import { useNavigate } from 'react-router-dom';
 const db = getFirestore();
 
 function LoginPage() {
-  const navigate = useNavigate();  // Use navigate for redirection
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Check if user already exists in Firestore
+      console.log('User Logged In:', user);  // Check if this logs
       const userRef = doc(db, 'users', user.uid);
       const docSnap = await getDoc(userRef);
 
@@ -21,14 +21,14 @@ function LoginPage() {
         await setDoc(userRef, {
           displayName: user.displayName,
           email: user.email,
-          role: 'parent',  // Default role
+          role: 'parent',
           photoURL: user.photoURL,
           uid: user.uid
         });
       }
 
-      alert(`Welcome, ${user.displayName}!`);
-      navigate('/dashboard');  // Redirect to dashboard after successful login
+      console.log('Redirecting to dashboard...');  // Ensure this fires
+      navigate('/dashboard');
     } catch (error) {
       console.error('Login Failed:', error.message);
       alert('Failed to sign in. Please try again.');
