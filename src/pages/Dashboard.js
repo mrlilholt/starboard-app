@@ -18,8 +18,8 @@ function Dashboard() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [kidData, setKidData] = useState(null);  // eslint-disable-next-line no-unused-vars
-
+  // eslint-disable-next-line no-unused-vars
+  const [kidData, setKidData] = useState(null);  // Real-time data from Firestore (unused for now)
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
