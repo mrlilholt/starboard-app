@@ -54,6 +54,8 @@ function Dashboard() {
   const handleSelectKid = (kid) => {
     setSelectedKid(kid);
     setRatings({});
+    setShowCategories(false);
+    setActiveCategory(null);
   };
 
   const handleRating = (category, rating) => {
@@ -93,6 +95,7 @@ function Dashboard() {
     }
 
     setSelectedKid(null);
+    setRatings({});
   };
 
   const handleAddCategory = () => {
@@ -143,9 +146,60 @@ function Dashboard() {
           </div>
         ))}
       </div>
+
+      {selectedKid && (
+        <div style={styles.modal}>
+          <h2>Rate {selectedKid.name}</h2>
+          
+          <div>
+            <img 
+              src="/toybox-icon.png" 
+              alt="Select Category" 
+              style={styles.toyBoxIcon} 
+              onClick={() => setShowCategories(!showCategories)} 
+            />
+            {showCategories && (
+              <div style={styles.categoryDropdown}>
+                {categories.map((cat) => (
+                  <div 
+                    key={cat} 
+                    style={styles.categoryItem}
+                    onClick={() => setActiveCategory(cat)}>
+                    {cat}
+                  </div>
+                ))}
+                <div style={styles.addCategory} onClick={handleAddCategory}>
+                  + Add Category
+                </div>
+              </div>
+            )}
+          </div>
+
+          {activeCategory && (
+            <div>
+              <h3>{activeCategory}</h3>
+              <div style={styles.starsContainer}>
+                {[...Array(5)].map((_, i) => (
+                  <span
+                    key={i}
+                    style={styles.largeStar}
+                    onClick={() => handleRating(activeCategory, i + 1)}>
+                    {i < (ratings[activeCategory] || 0) ? '⭐' : '☆'}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <button onClick={handleSave} style={styles.saveButton}>
+            Save
+          </button>
+        </div>
+      )}
     </div>
   );
 }
+
 
 const styles = {
   container: {
