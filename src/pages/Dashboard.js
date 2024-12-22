@@ -15,7 +15,6 @@ function Dashboard() {
   const [recommend, setRecommend] = useState(false);
   const [activeCategory, setActiveCategory] = useState(initialCategories[0]);
   const [categories, setCategories] = useState(initialCategories);
-  const [newCategory, setNewCategory] = useState('');
 
   const handleSelectKid = (kid) => {
     setSelectedKid(kid);
@@ -35,9 +34,9 @@ function Dashboard() {
   };
 
   const handleAddCategory = () => {
+    const newCategory = prompt('Enter new category:');
     if (newCategory && !categories.includes(newCategory)) {
       setCategories((prev) => [...prev, newCategory]);
-      setNewCategory('');
     }
   };
 
@@ -78,6 +77,7 @@ function Dashboard() {
                 {cat}
               </button>
             ))}
+            <button onClick={handleAddCategory} style={styles.addButton}>+ Add Category</button>
           </div>
           {[...Array(5)].map((_, i) => (
             <span 
@@ -97,15 +97,6 @@ function Dashboard() {
               /> Would Not Recommend
             </div>
           )}
-          <div style={styles.addCategoryContainer}>
-            <input
-              type="text"
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-              placeholder="Add new category"
-            />
-            <button onClick={handleAddCategory}>Add</button>
-          </div>
         </div>
       )}
     </div>
@@ -203,8 +194,13 @@ const styles = {
     borderRadius: '8px',
     cursor: 'pointer'
   },
-  addCategoryContainer: {
-    marginTop: '20px'
+  addButton: {
+    padding: '8px 16px',
+    backgroundColor: '#007BFF',
+    color: 'white',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer'
   }
 };
 
