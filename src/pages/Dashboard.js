@@ -3,7 +3,6 @@ import { signOut } from 'firebase/auth';
 import { doc, setDoc, updateDoc, getDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebase';
 
-
 const kids = [
   { id: 1, name: 'Mira', image: '/mira.png' },
   { id: 2, name: 'Shea', image: '/shea.png' }
@@ -14,23 +13,28 @@ const initialCategories = ['Cleaning', 'Kindness', 'Listening', 'Helping', 'Shar
 function Dashboard() {
   const [selectedKid, setSelectedKid] = useState(null);
   const [ratings, setRatings] = useState({});
-  const [recommend, setRecommend] = useState(false);
+  // const [recommend, setRecommend] = useState(false);  // Commented out if unused
   const [categories, setCategories] = useState(initialCategories);
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
   const [kidData, setKidData] = useState(null);
+
+  // Memoized data processing to avoid unnecessary re-renders
   const processCumulativeData = useCallback(() => {
-    // Processing logic here
+    console.log("Processing cumulative data...");
   }, []);
-  const fetchStats = async () => {
-    console.log("Fetching stats...");  // Placeholder for fetching logic
-  };
-  
+
+  // Memoized fetchStats to avoid effect re-triggering
+  const fetchStats = useCallback(async () => {
+    console.log("Fetching stats...");
+    // Fetch logic here if needed
+  }, []);
+
   useEffect(() => {
     fetchStats();
-  }, [fetchStats, processCumulativeData]);  // Now safe to include
-  
-  // Real-time listener to get star data
+  }, [fetchStats, processCumulativeData]);  // Dependency array includes memoized functions
+
+  // Real-time listener for selected kid's star data
   useEffect(() => {
     if (selectedKid) {
       const docRef = doc(db, 'stars', selectedKid.name);
@@ -39,19 +43,19 @@ function Dashboard() {
         if (docSnap.exists()) {
           setKidData(docSnap.data());
         } else {
-          // If no data exists, initialize it
+          // Initialize empty data if no document exists
           setKidData({});
         }
       });
 
-      return () => unsubscribe();  // Cleanup listener on unmount
+      return () => unsubscribe();  // Cleanup to prevent memory leaks
     }
   }, [selectedKid]);
 
   const handleSelectKid = (kid) => {
     setSelectedKid(kid);
     setRatings({});
-    setRecommend(false);
+    // setRecommend(false);  // Reset recommendation (commented if unused)
   };
 
   const handleRating = (category, rating) => {
@@ -65,7 +69,7 @@ function Dashboard() {
     const docRef = doc(db, 'stars', selectedKid.name);
     const docSnap = await getDoc(docRef);
 
-    // Initialize if the document doesn't exist
+    // Initialize the doc if it doesn't exist
     if (!docSnap.exists()) {
       await setDoc(docRef, {
         history: [],
@@ -73,13 +77,12 @@ function Dashboard() {
       });
     }
 
-    // Update ratings in Firestore
+    // Update Firestore with new ratings
     const updates = {};
     Object.entries(ratings).forEach(([category, stars]) => {
       updates[category] = (docSnap.data()?.[category] || 0) + stars;
     });
 
-    // Push to daily history
     const todayStars = Object.values(ratings).reduce((a, b) => a + b, 0);
     updates['history'] = arrayUnion(todayStars);
 
@@ -129,28 +132,26 @@ function Dashboard() {
         <div style={styles.modal}>
           <h2>Rate {selectedKid.name}</h2>
           <div style={{ position: 'relative', display: 'inline-block' }}>
-            <img 
-              src="/toybox-icon.png" 
-              alt="Select Category" 
-              style={styles.toyBoxIcon} 
+            <img
+              src="/toybox-icon.png"
+              alt="Select Category"
+              style={styles.toyBoxIcon}
               onClick={() => setShowCategories(!showCategories)}
             />
             {showCategories && (
               <div style={styles.categoryDropdown}>
                 {categories.map((cat) => (
-                  <div 
-                    key={cat} 
+                  <div
+                    key={cat}
                     style={styles.categoryItem}
                     onClick={() => {
                       setActiveCategory(cat);
-                      setShowCategories(false);  // Close after selecting
+                      setShowCategories(false);
                     }}>
                     {cat}
                   </div>
                 ))}
-                <div 
-                  style={styles.addCategory} 
-                  onClick={handleAddCategory}>
+                <div style={styles.addCategory} onClick={handleAddCategory}>
                   + Add Category
                 </div>
               </div>
@@ -173,7 +174,9 @@ function Dashboard() {
             </div>
           )}
 
-          <button onClick={handleSave} style={styles.saveButton}>Save</button>
+          <button onClick={handleSave} style={styles.saveButton}>
+            Save
+          </button>
         </div>
       )}
     </div>
