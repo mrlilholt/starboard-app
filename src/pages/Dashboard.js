@@ -182,17 +182,26 @@ const styles = {
   },
   cardContainer: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
     gap: '20px',
     width: '100%',
-    maxWidth: '600px',
+    maxWidth: '900px',
     margin: '0 auto'
   },
   card: {
     cursor: 'pointer',
-    padding: '20px',
     border: '1px solid #ddd',
-    borderRadius: '10px'
+    borderRadius: '10px',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  kidImage: {
+    width: '100%',
+    height: '300px',  // Uniform height for all images
+    objectFit: 'cover',  // Ensures the image scales correctly and crops if necessary
+    borderBottom: '1px solid #ddd'  // Separates image from name
   }
 };
 
