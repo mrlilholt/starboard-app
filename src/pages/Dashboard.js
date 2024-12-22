@@ -3,6 +3,8 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
 import { doc, setDoc, updateDoc, getDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
+import React, { useState, useCallback } from 'react';
+
 
 const kids = [
   { id: 1, name: 'Mira', image: '/mira.png' },
@@ -14,14 +16,17 @@ const initialCategories = ['Cleaning', 'Kindness', 'Listening', 'Helping', 'Shar
 function Dashboard() {
   const [selectedKid, setSelectedKid] = useState(null);
   const [ratings, setRatings] = useState({});
-  //const [recommend, setRecommend] = useState(false);
+  const [recommend, setRecommend] = useState(false);
   const [categories, setCategories] = useState(initialCategories);
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
-  //const [kidData, setKidData] = useState({});
+  const [kidData, setKidData] = useState(null);
   const processCumulativeData = useCallback(() => {
     // Processing logic here
   }, []);
+  const fetchStats = async () => {
+    console.log("Fetching stats...");  // Placeholder for fetching logic
+  };
   
   useEffect(() => {
     fetchStats();
