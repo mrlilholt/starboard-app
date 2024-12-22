@@ -40,7 +40,16 @@ function LoginPage() {
     <div style={styles.container}>
       <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
       <h1>Welcome to Starboard!</h1>
-      <button style={styles.button} onClick={handleLogin}>Login with Google</button>
+      <p style={styles.tagline}>Rank your kids like an Uber Driver!</p>
+      
+      <button style={styles.button} onClick={handleLogin}>
+        <img 
+          src="https://img.icons8.com/color/20/000000/google-logo.png" 
+          alt="Google logo" 
+          style={styles.googleIcon} 
+        />
+        Login with Google
+      </button>
     </div>
   );
 }
@@ -59,15 +68,28 @@ const styles = {
     width: '300px',
     marginBottom: '20px'
   },
+  tagline: {
+    fontSize: '1.2rem',
+    color: '#555',
+    marginBottom: '30px',
+    fontWeight: '400'
+  },
   button: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
     padding: '12px 24px',
     fontSize: '1rem',
     cursor: 'pointer',
-    backgroundColor: '#007BFF',
+    backgroundColor: '#4285F4',
     color: 'white',
     border: 'none',
     borderRadius: '8px',
     transition: 'background-color 0.3s ease'
+  },
+  googleIcon: {
+    width: '20px',
+    height: '20px'
   }
 };
 
