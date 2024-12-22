@@ -3,7 +3,6 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
 
 // Define paths to images
-const defaultPic = `${process.env.PUBLIC_URL}/default_kid.png`;
 const miraPic = `${process.env.PUBLIC_URL}/mira.png`;
 const sheaPic = `${process.env.PUBLIC_URL}/shea.png`;
 const logo = `${process.env.PUBLIC_URL}/STARBOARD.gif`;
