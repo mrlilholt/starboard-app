@@ -14,7 +14,6 @@ function Dashboard() {
   const [selectedKid, setSelectedKid] = useState(null);
   const [ratings, setRatings] = useState({});
   const [recommend, setRecommend] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(initialCategories[0]);
   const [categories, setCategories] = useState(initialCategories);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -60,10 +59,10 @@ function Dashboard() {
       </header>
 
       {menuOpen && (
-        <div style={styles.menu}>
-          <button onClick={() => navigate('/dashboard')}>Dashboard</button>
-          <button onClick={() => navigate('/stats')}>Stats</button>
-          <button onClick={() => navigate('/about')}>About</button>
+        <div style={styles.dropdownMenu}>
+          <div onClick={() => navigate('/dashboard')} style={styles.menuItem}>Dashboard</div>
+          <div onClick={() => navigate('/stats')} style={styles.menuItem}>Stats</div>
+          <div onClick={() => navigate('/about')} style={styles.menuItem}>About</div>
         </div>
       )}
 
@@ -82,24 +81,19 @@ function Dashboard() {
           <h2>Rate {selectedKid.name}</h2>
           <div style={styles.categoryTabs}>
             {categories.map((cat) => (
-              <button
-                key={cat}
-                style={cat === activeCategory ? styles.activeTab : styles.tab}
-                onClick={() => setActiveCategory(cat)}>
-                {cat}
-              </button>
+              <div key={cat} style={styles.categoryContainer}>
+                <span>{cat}</span>
+                {[...Array(5)].map((_, i) => (
+                  <span
+                    key={i}
+                    style={styles.star}
+                    onClick={() => handleRating(cat, i + 1)}>
+                    {i < (ratings[cat] || 0) ? '⭐' : '☆'}
+                  </span>
+                ))}
+              </div>
             ))}
             <button onClick={handleAddCategory} style={styles.addButton}>+ Add Category</button>
-          </div>
-          <div style={styles.starsContainer}>
-            {[...Array(5)].map((_, i) => (
-              <span
-                key={i}
-                style={styles.star}
-                onClick={() => handleRating(activeCategory, i + 1)}>
-                {i < ratings[activeCategory] ? '⭐' : '☆'}
-              </span>
-            ))}
           </div>
           <button onClick={handleSave} style={styles.saveButton}>Save</button>
         </div>
@@ -157,16 +151,20 @@ const styles = {
     borderRadius: '6px',
     cursor: 'pointer'
   },
-  menu: {
-    display: 'flex',
-    flexDirection: 'column',
+  dropdownMenu: {
     position: 'absolute',
     top: '70px',
     right: '20px',
-    backgroundColor: '#fff',
-    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-    padding: '10px',
-    borderRadius: '8px'
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    padding: '10px'
+  },
+  menuItem: {
+    padding: '10px 20px',
+    cursor: 'pointer',
+    color: 'white',
+    textAlign: 'center'
   },
   cardContainer: {
     display: 'grid',
@@ -181,6 +179,25 @@ const styles = {
     padding: '20px',
     border: '1px solid #ddd',
     borderRadius: '10px'
+  },
+  kidImage: {
+    width: '150px',
+    height: '150px',
+    objectFit: 'cover',
+    borderRadius: '10px'
+  },
+  star: {
+    fontSize: '2.5rem',
+    cursor: 'pointer'
+  },
+  saveButton: {
+    marginTop: '15px',
+    padding: '10px 24px',
+    backgroundColor: '#007BFF',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer'
   }
 };
 
