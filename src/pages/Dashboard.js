@@ -14,12 +14,19 @@ const initialCategories = ['Cleaning', 'Kindness', 'Listening', 'Helping', 'Shar
 function Dashboard() {
   const [selectedKid, setSelectedKid] = useState(null);
   const [ratings, setRatings] = useState({});
-  const [recommend, setRecommend] = useState(false);
+  //const [recommend, setRecommend] = useState(false);
   const [categories, setCategories] = useState(initialCategories);
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
-  const [kidData, setKidData] = useState({});
-
+  //const [kidData, setKidData] = useState({});
+  const processCumulativeData = useCallback(() => {
+    // Processing logic here
+  }, []);
+  
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats, processCumulativeData]);  // Now safe to include
+  
   // Real-time listener to get star data
   useEffect(() => {
     if (selectedKid) {
