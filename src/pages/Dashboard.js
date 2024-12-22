@@ -71,7 +71,7 @@ function Dashboard() {
       {selectedKid && (
         <div style={styles.modal}>
           <h2>Rate {selectedKid.name}</h2>
-          <div>
+          <div style={{ position: 'relative', display: 'inline-block' }}>
             <img 
               src="/toybox-icon.png" 
               alt="Select Category" 
@@ -84,7 +84,10 @@ function Dashboard() {
                   <div 
                     key={cat} 
                     style={styles.categoryItem}
-                    onClick={() => setActiveCategory(cat)}>
+                    onClick={() => {
+                      setActiveCategory(cat);
+                      setShowCategories(false);  // Close after selecting
+                    }}>
                     {cat}
                   </div>
                 ))}
@@ -96,6 +99,7 @@ function Dashboard() {
               </div>
             )}
           </div>
+
 
           {activeCategory && (
             <div>
@@ -166,10 +170,15 @@ const styles = {
     cursor: 'pointer'
   },
   categoryDropdown: {
+    position: 'absolute',  // Ensure dropdown stays under toybox
+    top: '60px',           // Adjust based on toybox icon size
+    left: '0',
     backgroundColor: '#333',
     color: 'white',
     borderRadius: '8px',
-    padding: '10px'
+    padding: '10px',
+    zIndex: '100',        // Ensure it appears above other content
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
   },
   categoryItem: {
     padding: '10px',
