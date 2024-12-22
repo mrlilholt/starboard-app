@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 
 const kids = [
   { id: 1, name: 'Mira', image: '/mira.png' },
@@ -17,7 +17,7 @@ function Dashboard() {
   const [categories, setCategories] = useState(initialCategories);
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const handleSelectKid = (kid) => {
     setSelectedKid(kid);
