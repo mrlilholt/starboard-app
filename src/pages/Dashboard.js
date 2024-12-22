@@ -111,18 +111,21 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100vh',
-    textAlign: 'center'
+    minHeight: '100vh',
+    textAlign: 'center',
+    padding: '20px'
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    padding: '10px 20px'
+    padding: '10px 20px',
+    boxSizing: 'border-box'
   },
   logo: {
-    width: '150px'
+    width: '120px',
+    height: 'auto'
   },
   userSection: {
     display: 'flex',
@@ -135,7 +138,7 @@ const styles = {
     marginRight: '10px'
   },
   logoutButton: {
-    padding: '8px 16px',
+    padding: '8px 12px',
     backgroundColor: '#007BFF',
     color: 'white',
     border: 'none',
@@ -143,8 +146,12 @@ const styles = {
     cursor: 'pointer'
   },
   cardContainer: {
-    display: 'flex',
-    gap: '20px'
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+    gap: '20px',
+    width: '100%',
+    maxWidth: '600px',
+    margin: '0 auto'
   },
   card: {
     cursor: 'pointer',
@@ -166,32 +173,24 @@ const styles = {
   },
   categoryTabs: {
     display: 'flex',
+    flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: '10px',
-    marginBottom: '10px'
+    gap: '10px'
   },
   starsContainer: {
     marginBottom: '15px'
   },
   star: {
-    fontSize: '2rem',
+    fontSize: '2.5rem',
     cursor: 'pointer'
   },
   saveButton: {
-    marginTop: '10px',
-    padding: '10px 20px',
+    marginTop: '15px',
+    padding: '10px 24px',
     backgroundColor: '#007BFF',
     color: 'white',
     border: 'none',
     borderRadius: '8px',
-    cursor: 'pointer'
-  },
-  addButton: {
-    padding: '8px 16px',
-    backgroundColor: '#007BFF',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
     cursor: 'pointer'
   }
 };
