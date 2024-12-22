@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { signOut } from 'firebase/auth';
 import { doc, setDoc, updateDoc, getDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebase';
+import { Link } from 'react-router-dom';  // Import for navigation
 
 const kids = [
   { id: 1, name: 'Mira', image: '/mira.png' },
@@ -16,20 +17,28 @@ function Dashboard() {
   const [categories, setCategories] = useState(initialCategories);
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
-// eslint-disable-next-line no-unused-vars
-const [kidData, setKidData] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [kidData, setKidData] = useState(null);  // Real-time data from Firestore
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
 
   const fetchStats = useCallback(async () => {
     console.log("Fetching stats...");
+    // Placeholder for fetching logic
   }, []);
 
+  // Fetch stats on mount
   useEffect(() => {
     fetchStats();
-  }, [fetchStats]);  // Only dependent on fetchStats
+  }, [fetchStats]);  
 
+  // Real-time listener for Firestore updates
   useEffect(() => {
     if (selectedKid) {
       const docRef = doc(db, 'stars', selectedKid.name);
+
       const unsubscribe = onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists()) {
           setKidData(docSnap.data());
@@ -37,6 +46,7 @@ const [kidData, setKidData] = useState(null);
           setKidData({});
         }
       });
+
       return () => unsubscribe();
     }
   }, [selectedKid]);
@@ -57,6 +67,7 @@ const [kidData, setKidData] = useState(null);
     const docRef = doc(db, 'stars', selectedKid.name);
     const docSnap = await getDoc(docRef);
 
+    // Initialize if not exists
     if (!docSnap.exists()) {
       await setDoc(docRef, {
         history: [],
@@ -64,11 +75,13 @@ const [kidData, setKidData] = useState(null);
       });
     }
 
+    // Update Firestore ratings
     const updates = {};
     Object.entries(ratings).forEach(([category, stars]) => {
       updates[category] = (docSnap.data()?.[category] || 0) + stars;
     });
 
+    // Track daily stars
     const todayStars = Object.values(ratings).reduce((a, b) => a + b, 0);
     updates['history'] = arrayUnion(todayStars);
 
@@ -78,6 +91,7 @@ const [kidData, setKidData] = useState(null);
     } catch (error) {
       console.error("Error saving data:", error);
     }
+
     setSelectedKid(null);
   };
 
@@ -97,9 +111,26 @@ const [kidData, setKidData] = useState(null);
     <div style={styles.container}>
       <header style={styles.header}>
         <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
-        <div style={styles.userSection}>
-          <img src={auth.currentUser?.photoURL} alt="User" style={styles.userIcon} />
-          <button onClick={logout} style={styles.logoutButton}>Logout</button>
+        
+        <div style={styles.rightSection}>
+          <div style={styles.menuIcon} onClick={toggleMenu}>
+            ☰
+          </div>
+          
+          {menuOpen && (
+            <div style={styles.menuDropdown}>
+              <Link to="/dashboard" style={styles.menuItem}>Dashboard</Link>
+              <Link to="/stats" style={styles.menuItem}>Stats</Link>
+              <Link to="/about" style={styles.menuItem}>About</Link>
+              <div style={styles.menuItem} onClick={logout}>Logout</div>
+            </div>
+          )}
+
+          <img 
+            src={auth.currentUser?.photoURL} 
+            alt="User" 
+            style={styles.userIcon} 
+          />
         </div>
       </header>
 
@@ -112,62 +143,9 @@ const [kidData, setKidData] = useState(null);
           </div>
         ))}
       </div>
-
-      {selectedKid && (
-        <div style={styles.modal}>
-          <h2>Rate {selectedKid.name}</h2>
-          <div style={{ position: 'relative', display: 'inline-block' }}>
-            <img
-              src="/toybox-icon.png"
-              alt="Select Category"
-              style={styles.toyBoxIcon}
-              onClick={() => setShowCategories(!showCategories)}
-            />
-            {showCategories && (
-              <div style={styles.categoryDropdown}>
-                {categories.map((cat) => (
-                  <div
-                    key={cat}
-                    style={styles.categoryItem}
-                    onClick={() => {
-                      setActiveCategory(cat);
-                      setShowCategories(false);
-                    }}>
-                    {cat}
-                  </div>
-                ))}
-                <div style={styles.addCategory} onClick={handleAddCategory}>
-                  + Add Category
-                </div>
-              </div>
-            )}
-          </div>
-
-          {activeCategory && (
-            <div>
-              <h3>{activeCategory}</h3>
-              <div style={styles.starsContainer}>
-                {[...Array(5)].map((_, i) => (
-                  <span
-                    key={i}
-                    style={styles.largeStar}
-                    onClick={() => handleRating(activeCategory, i + 1)}>
-                    {i < (ratings[activeCategory] || 0) ? '⭐' : '☆'}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <button onClick={handleSave} style={styles.saveButton}>
-            Save
-          </button>
-        </div>
-      )}
     </div>
   );
 }
-
 
 const styles = {
   container: {
@@ -187,96 +165,41 @@ const styles = {
     padding: '10px 20px',
     boxSizing: 'border-box'
   },
+  rightSection: {
+    display: 'flex',
+    alignItems: 'center',
+    position: 'relative'
+  },
   logo: {
     width: '120px',
     height: 'auto'
   },
-  userSection: {
-    display: 'flex',
-    alignItems: 'center'
+  menuIcon: {
+    fontSize: '2rem',
+    cursor: 'pointer',
+    marginRight: '20px'
+  },
+  menuDropdown: {
+    position: 'absolute',
+    top: '50px',
+    right: '0',
+    backgroundColor: 'white',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    zIndex: 100
+  },
+  menuItem: {
+    padding: '12px 20px',
+    cursor: 'pointer',
+    textDecoration: 'none',
+    color: '#333',
+    display: 'block'
   },
   userIcon: {
     width: '40px',
     height: '40px',
     borderRadius: '50%',
-    marginRight: '10px'
-  },
-  logoutButton: {
-    padding: '8px 12px',
-    backgroundColor: '#007BFF',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer'
-  },
-  toyBoxIcon: {
-    width: '50px',
-    height: '50px',
-    cursor: 'pointer'
-  },
-  categoryItem: {
-    padding: '10px',
-    cursor: 'pointer'
-  },
-  saveButton: {
-    marginTop: '15px',
-    padding: '10px 24px',
-    backgroundColor: '#007BFF',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer'
-  },
-  cardContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: '20px',
-    width: '100%',
-    maxWidth: '800px',
-    margin: '0 auto'
-  },
-  card: {
-    cursor: 'pointer',
-    padding: '10px',
-    border: '1px solid #ddd',
-    borderRadius: '10px',
-    overflow: 'hidden',  // Ensure image fits inside card
-    textAlign: 'center',
-  },
-  kidImage: {
-    width: '100%',
-    height: 'auto',
-    maxHeight: '400px',  // Limit image height
-    objectFit: 'cover',
-    borderRadius: '10px'
-  },
-  modal: {
-    marginTop: '20px',
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '10px',
-    backgroundColor: 'white',
-    maxWidth: '600px',
-    width: '90%',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-    overflowY: 'auto',
-    maxHeight: '80vh',   // Limit modal height
-  },
-  categoryDropdown: {
-    position: 'absolute',
-    top: '50px',  // Adjust dropdown position
-    left: '0',
-    backgroundColor: '#333',
-    color: 'white',
-    borderRadius: '8px',
-    padding: '10px',
-    zIndex: '100',
-    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-    minWidth: '150px'
-  },
-  largeStar: {
-    fontSize: '3rem',  // Increase star size
-    cursor: 'pointer'
+    marginLeft: '10px'
   }
 };
 
