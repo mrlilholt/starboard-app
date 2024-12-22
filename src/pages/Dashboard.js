@@ -2,34 +2,32 @@ import React, { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
 
-// Define paths to images
-const miraPic = `${process.env.PUBLIC_URL}/mira.png`;
-const sheaPic = `${process.env.PUBLIC_URL}/shea.png`;
-const logo = `${process.env.PUBLIC_URL}/STARBOARD.gif`;
-
 const kids = [
-  { id: 1, name: 'Mira', image: miraPic },
-  { id: 2, name: 'Shea', image: sheaPic }
+  { id: 1, name: 'Mira', image: '/mira.png' },
+  { id: 2, name: 'Shea', image: '/shea.png' }
 ];
+
+const categories = ['Cleaning', 'Kindness', 'Listening', 'Helping', 'Sharing'];
 
 function Dashboard() {
   const [selectedKid, setSelectedKid] = useState(null);
-  const [stars, setStars] = useState(0);
+  const [ratings, setRatings] = useState({});
   const [recommend, setRecommend] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(categories[0]);
 
   const handleSelectKid = (kid) => {
     setSelectedKid(kid);
-    setStars(0);
+    setRatings({});
     setRecommend(false);
   };
 
-  const handleRating = (rating) => {
-    setStars(rating);
+  const handleRating = (category, rating) => {
+    setRatings((prev) => ({ ...prev, [category]: rating }));
     if (rating > 0) setRecommend(false);
   };
 
   const handleSave = () => {
-    console.log(`Saving rating for ${selectedKid.name}: ${stars} stars`);
+    console.log(`Saving ratings for ${selectedKid.name}:`, ratings);
     if (recommend) console.log(`${selectedKid.name} marked as Would Not Recommend`);
     setSelectedKid(null);
   };
@@ -42,7 +40,7 @@ function Dashboard() {
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <img src={logo} alt="Starboard Logo" style={styles.logo} />
+        <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
         <div style={styles.userSection}>
           <img src={auth.currentUser?.photoURL} alt="User" style={styles.userIcon} />
           <button onClick={logout} style={styles.logoutButton}>Logout</button>
@@ -62,12 +60,25 @@ function Dashboard() {
       {selectedKid && (
         <div style={styles.modal}>
           <h2>Rate {selectedKid.name}</h2>
+          <div style={styles.categoryTabs}>
+            {categories.map((cat) => (
+              <button 
+                key={cat} 
+                style={cat === activeCategory ? styles.activeTab : styles.tab}
+                onClick={() => setActiveCategory(cat)}>
+                {cat}
+              </button>
+            ))}
+          </div>
           {[...Array(5)].map((_, i) => (
-            <span key={i} style={styles.star} onClick={() => handleRating(i + 1)}>
-              {i < stars ? '⭐' : '☆'}
+            <span 
+              key={i} 
+              style={styles.star} 
+              onClick={() => handleRating(activeCategory, i + 1)}>
+              {i < ratings[activeCategory] ? '⭐' : '☆'}
             </span>
           ))}
-          {stars === 0 && (
+          {ratings[activeCategory] === 0 && (
             <div>
               <input
                 type="checkbox"
@@ -76,7 +87,7 @@ function Dashboard() {
               /> Would Not Recommend
             </div>
           )}
-          <button onClick={handleSave}>Save</button>
+          <button onClick={handleSave} style={styles.saveButton}>Save</button>
         </div>
       )}
     </div>
@@ -142,8 +153,36 @@ const styles = {
     borderRadius: '10px',
     backgroundColor: 'white'
   },
+  categoryTabs: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '10px',
+    marginBottom: '10px'
+  },
+  tab: {
+    padding: '8px 16px',
+    border: '1px solid #ddd',
+    cursor: 'pointer',
+    borderRadius: '6px'
+  },
+  activeTab: {
+    padding: '8px 16px',
+    border: '1px solid #007BFF',
+    backgroundColor: '#007BFF',
+    color: 'white',
+    borderRadius: '6px'
+  },
   star: {
     fontSize: '2rem',
+    cursor: 'pointer'
+  },
+  saveButton: {
+    marginTop: '10px',
+    padding: '10px 20px',
+    backgroundColor: '#007BFF',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
     cursor: 'pointer'
   }
 };
