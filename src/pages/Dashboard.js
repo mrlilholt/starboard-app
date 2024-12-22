@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { signOut } from 'firebase/auth';
 import { doc, setDoc, updateDoc, getDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebase';
