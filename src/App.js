@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import LoginPage from './pages/LoginPage';
-import AboutPage from './pages/AboutPage';
+import AboutPage from './pages/About';
 import StatsPage from './pages/StatsPage';
 import { auth } from './firebase/firebase';
 import { useEffect, useState } from 'react';
