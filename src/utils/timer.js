@@ -1,8 +1,3 @@
-const timerElement = document.querySelector('#timer');
-if (timerElement) {
-  timerElement.addEventListener('click', startTimer);
-}
-
 export const startTimer = (callback, duration) => {
     let timer = duration;
     const interval = setInterval(() => {
@@ -12,5 +7,10 @@ export const startTimer = (callback, duration) => {
         if (callback) callback();
       }
     }, 1000);
+  };
+  
+  const timerElement = document.querySelector('#timer');
+  if (timerElement) {
+    timerElement.addEventListener('click', () => startTimer(null, 60));  // Default 60 seconds for demo
   };
   
