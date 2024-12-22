@@ -1,42 +1,194 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase/firebase';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend, Filler);
+
+const kids = [
+  { id: 1, name: 'Mira' },
+  { id: 2, name: 'Shea' }
+];
 
 function StatsPage() {
-  const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedKid, setSelectedKid] = useState(null);
+  const [kidData, setKidData] = useState({});
+  const [chartData, setChartData] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+  useEffect(() => {
+    if (selectedKid) {
+      const docRef = doc(db, 'stars', selectedKid.name);
+
+      const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setKidData(data);
+          processCumulativeData(data.history);
+        } else {
+          setKidData({});
+          setChartData(null);
+        }
+      });
+
+      return () => unsubscribe();
+    }
+  }, [selectedKid, selectedCategory, startDate, endDate]);
+
+  const processCumulativeData = (history) => {
+    if (!history) return;
+
+    let cumulativeSum = 0;
+    const filteredHistory = history.filter((day) => {
+      const date = new Date(day.date);
+      const inRange = (!startDate || date >= new Date(startDate)) &&
+                      (!endDate || date <= new Date(endDate));
+
+      return selectedCategory === 'All' || day.category === selectedCategory ? inRange : false;
+    });
+
+    const labels = filteredHistory.map((_, i) => `Day ${i + 1}`);
+    const dataset = filteredHistory.map((day) => {
+      cumulativeSum += day.stars;
+      return cumulativeSum;
+    });
+
+    const annotations = dataset.map((value, index) => {
+      if (value % 50 === 0) {
+        return {
+          type: 'line',
+          scaleID: 'y',
+          value,
+          borderColor: 'red',
+          borderWidth: 2,
+          label: {
+            content: `🎉 ${value} Stars!`,
+            enabled: true,
+            position: 'start'
+          }
+        };
+      }
+      return null;
+    }).filter(Boolean);
+
+    setChartData({
+      labels,
+      datasets: [
+        {
+          label: 'Cumulative Star Count',
+          data: dataset,
+          fill: true,
+          backgroundColor: 'rgba(75,192,192,0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          tension: 0.3,
+          pointRadius: 5,
+        }
+      ],
+      options: {
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: (tooltipItem) => {
+                return `Total Stars: ${tooltipItem.raw}`;
+              }
+            }
+          },
+          annotation: {
+            annotations
+          }
+        }
+      }
+    });
   };
 
-  const navigateTo = (path) => {
-    navigate(path);
-    setMenuOpen(false);
-  };
+  const totalStars = Object.entries(kidData)
+    .filter(([key]) => key !== 'history')
+    .reduce((acc, [_, val]) => acc + val, 0);
+
+  const categories = Object.keys(kidData).filter((key) => key !== 'history');
 
   return (
     <div style={styles.container}>
-      <header style={styles.header}>
-        <h1>Stats Overview</h1>
-        <div style={styles.menuContainer}>
-          <button onClick={toggleMenu} style={styles.menuButton}>☰</button>
-          {menuOpen && (
-            <div style={styles.dropdownMenu}>
-              <p onClick={() => navigateTo('/dashboard')} style={styles.menuItem}>Dashboard</p>
-              <p onClick={() => navigateTo('/stats')} style={styles.menuItem}>Stats</p>
-              <p onClick={() => navigateTo('/about')} style={styles.menuItem}>About</p>
-            </div>
-          )}
-        </div>
-      </header>
+      <h1>Starboard Stats</h1>
 
-      <div style={styles.content}>
-        <p>Here you can see the cumulative ratings for your children.</p>
-        {/* Placeholder for future stats visualization */}
-        <p>Coming soon...</p>
+      <div style={styles.selectKid}>
+        {kids.map((kid) => (
+          <button
+            key={kid.id}
+            style={styles.kidButton}
+            onClick={() => setSelectedKid(kid)}
+          >
+            {kid.name}
+          </button>
+        ))}
       </div>
 
-      <button onClick={() => navigate('/dashboard')} style={styles.backButton}>Back to Dashboard</button>
+      {selectedKid && (
+        <div style={styles.statsContainer}>
+          <h2>{selectedKid.name}'s Stats</h2>
+          <p>Total Stars: {totalStars}</p>
+
+          <div style={styles.filters}>
+            <label>Filter by Category:</label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              style={styles.dropdown}
+            >
+              <option value="All">All</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+
+            <label>Start Date:</label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              style={styles.dateInput}
+            />
+
+            <label>End Date:</label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              style={styles.dateInput}
+            />
+          </div>
+
+          {chartData && (
+            <div style={styles.chartContainer}>
+              <Line data={chartData} options={chartData.options} />
+            </div>
+          )}
+
+          <div style={styles.breakdown}>
+            <h3>Breakdown by Category:</h3>
+            {categories.map((cat) => (
+              <p key={cat}>
+                {cat}: {kidData[cat]} ⭐
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -47,51 +199,48 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '100vh',
-    textAlign: 'center',
-    padding: '20px'
+    padding: '20px',
+    textAlign: 'center'
   },
-  header: {
-    marginBottom: '30px',
+  selectKid: {
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%'
+    gap: '20px',
+    margin: '20px 0'
   },
-  content: {
-    marginBottom: '20px'
-  },
-  backButton: {
-    marginTop: '30px',
-    padding: '12px 24px',
-    backgroundColor: '#007BFF',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer'
-  },
-  menuContainer: {
-    position: 'relative'
-  },
-  menuButton: {
-    background: 'none',
-    border: 'none',
-    fontSize: '1.5rem',
-    cursor: 'pointer'
-  },
-  dropdownMenu: {
-    position: 'absolute',
-    right: 0,
-    top: '2.5rem',
-    backgroundColor: 'white',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-    zIndex: 1000
-  },
-  menuItem: {
+  kidButton: {
     padding: '10px 20px',
-    cursor: 'pointer'
+    fontSize: '18px',
+    cursor: 'pointer',
+    borderRadius: '8px',
+    border: '1px solid #ccc'
+  },
+  statsContainer: {
+    marginTop: '30px',
+    textAlign: 'left'
+  },
+  filters: {
+    display: 'flex',
+    gap: '20px',
+    alignItems: 'center',
+    margin: '20px 0'
+  },
+  dropdown: {
+    padding: '8px',
+    fontSize: '16px',
+    borderRadius: '6px'
+  },
+  dateInput: {
+    padding: '6px',
+    fontSize: '16px',
+    borderRadius: '6px'
+  },
+  chartContainer: {
+    margin: '30px 0',
+    width: '600px'
+  },
+  breakdown: {
+    marginTop: '20px',
+    textAlign: 'left'
   }
 };
 

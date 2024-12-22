@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
-//import { useNavigate } from 'react-router-dom';
+import { doc, setDoc, updateDoc, getDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase/firebase';
 
 const kids = [
   { id: 1, name: 'Mira', image: '/mira.png' },
@@ -17,7 +18,25 @@ function Dashboard() {
   const [categories, setCategories] = useState(initialCategories);
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
-  //const navigate = useNavigate();
+  const [kidData, setKidData] = useState({});
+
+  // Real-time listener to get star data
+  useEffect(() => {
+    if (selectedKid) {
+      const docRef = doc(db, 'stars', selectedKid.name);
+
+      const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          setKidData(docSnap.data());
+        } else {
+          // If no data exists, initialize it
+          setKidData({});
+        }
+      });
+
+      return () => unsubscribe();  // Cleanup listener on unmount
+    }
+  }, [selectedKid]);
 
   const handleSelectKid = (kid) => {
     setSelectedKid(kid);
@@ -30,9 +49,37 @@ function Dashboard() {
     setShowCategories(false);
   };
 
-  const handleSave = () => {
-    console.log(`Saving ratings for ${selectedKid.name}:`, ratings);
-    if (recommend) console.log(`${selectedKid.name} marked as Would Not Recommend`);
+  const handleSave = async () => {
+    if (!selectedKid) return;
+
+    const docRef = doc(db, 'stars', selectedKid.name);
+    const docSnap = await getDoc(docRef);
+
+    // Initialize if the document doesn't exist
+    if (!docSnap.exists()) {
+      await setDoc(docRef, {
+        history: [],
+        ...Object.fromEntries(categories.map((cat) => [cat, 0]))
+      });
+    }
+
+    // Update ratings in Firestore
+    const updates = {};
+    Object.entries(ratings).forEach(([category, stars]) => {
+      updates[category] = (docSnap.data()?.[category] || 0) + stars;
+    });
+
+    // Push to daily history
+    const todayStars = Object.values(ratings).reduce((a, b) => a + b, 0);
+    updates['history'] = arrayUnion(todayStars);
+
+    try {
+      await updateDoc(docRef, updates);
+      console.log(`Saved ratings for ${selectedKid.name}`);
+    } catch (error) {
+      console.error("Error saving data:", error);
+    }
+
     setSelectedKid(null);
   };
 
@@ -99,7 +146,6 @@ function Dashboard() {
               </div>
             )}
           </div>
-
 
           {activeCategory && (
             <div>
