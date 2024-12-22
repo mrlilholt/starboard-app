@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import { getFirestore, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { startTimer } from '../utils/timer';
+startTimer(() => {
+  console.log('Timer done!');
+}, 60); // 60-second countdown
 
 const db = getFirestore();
 
@@ -70,10 +74,6 @@ const styles = {
     WebkitBackgroundClip: 'text',
   }
 };
-import { startTimer } from '../utils/timer';
-startTimer(() => {
-  console.log('Timer done!');
-}, 60); // 60-second countdown
 
 
 export default StarRating;
