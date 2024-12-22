@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
+import { useNavigate } from 'react-router-dom';
 
 const kids = [
   { id: 1, name: 'Mira', image: '/mira.png' },
@@ -15,6 +16,8 @@ function Dashboard() {
   const [recommend, setRecommend] = useState(false);
   const [activeCategory, setActiveCategory] = useState(initialCategories[0]);
   const [categories, setCategories] = useState(initialCategories);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleSelectKid = (kid) => {
     setSelectedKid(kid);
@@ -45,6 +48,10 @@ function Dashboard() {
     window.location.href = '/';
   };
 
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   return (
     <div style={styles.container}>
       <header style={styles.header}>
@@ -52,8 +59,17 @@ function Dashboard() {
         <div style={styles.userSection}>
           <img src={auth.currentUser?.photoURL} alt="User" style={styles.userIcon} />
           <button onClick={logout} style={styles.logoutButton}>Logout</button>
+          <button onClick={toggleMenu} style={styles.menuButton}>☰</button>
         </div>
       </header>
+
+      {menuOpen && (
+        <div style={styles.menu}>
+          <button onClick={() => navigate('/dashboard')} style={styles.menuItem}>Dashboard</button>
+          <button onClick={() => navigate('/stats')} style={styles.menuItem}>Stats</button>
+          <button onClick={() => navigate('/about')} style={styles.menuItem}>About</button>
+        </div>
+      )}
 
       <h1>Rate Your Child's Behavior</h1>
       <div style={styles.cardContainer}>
@@ -145,53 +161,33 @@ const styles = {
     borderRadius: '6px',
     cursor: 'pointer'
   },
-  cardContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-    gap: '20px',
-    width: '100%',
-    maxWidth: '600px',
-    margin: '0 auto'
-  },
-  card: {
-    cursor: 'pointer',
-    padding: '20px',
-    border: '1px solid #ddd',
-    borderRadius: '10px'
-  },
-  kidImage: {
-    width: '100px',
-    height: '100px',
-    borderRadius: '10px'
-  },
-  modal: {
-    marginTop: '20px',
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '10px',
-    backgroundColor: 'white'
-  },
-  categoryTabs: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: '10px'
-  },
-  starsContainer: {
-    marginBottom: '15px'
-  },
-  star: {
-    fontSize: '2.5rem',
-    cursor: 'pointer'
-  },
-  saveButton: {
-    marginTop: '15px',
-    padding: '10px 24px',
-    backgroundColor: '#007BFF',
+  menuButton: {
+    marginLeft: '10px',
+    padding: '8px',
+    fontSize: '1.2rem',
+    backgroundColor: '#333',
     color: 'white',
     border: 'none',
-    borderRadius: '8px',
+    borderRadius: '6px',
     cursor: 'pointer'
+  },
+  menu: {
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'absolute',
+    top: '60px',
+    right: '20px',
+    backgroundColor: '#f1f1f1',
+    border: '1px solid #ddd',
+    borderRadius: '6px',
+    padding: '10px'
+  },
+  menuItem: {
+    padding: '10px 15px',
+    backgroundColor: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    textAlign: 'left'
   }
 };
 

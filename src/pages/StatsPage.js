@@ -1,54 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { auth } from '../firebase/firebase';
-import { signOut } from 'firebase/auth';
-
-const mockStats = {
-  Mira: {
-    Cleaning: 4,
-    Kindness: 5,
-    Listening: 3,
-  },
-  Shea: {
-    Helping: 5,
-    Sharing: 4,
-    Kindness: 2,
-  }
-};
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function StatsPage() {
-  const [stats, setStats] = useState(mockStats);
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    // Simulate fetching stats from a backend or Firestore
-    console.log('Fetching stats...');
-  }, []);
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
 
-  const logout = async () => {
-    await signOut(auth);
-    window.location.href = '/';
+  const navigateTo = (path) => {
+    navigate(path);
+    setMenuOpen(false);
   };
 
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
-        <div style={styles.userSection}>
-          <img src={auth.currentUser?.photoURL} alt="User" style={styles.userIcon} />
-          <button onClick={logout} style={styles.logoutButton}>Logout</button>
+        <h1>Stats Overview</h1>
+        <div style={styles.menuContainer}>
+          <button onClick={toggleMenu} style={styles.menuButton}>☰</button>
+          {menuOpen && (
+            <div style={styles.dropdownMenu}>
+              <p onClick={() => navigateTo('/dashboard')} style={styles.menuItem}>Dashboard</p>
+              <p onClick={() => navigateTo('/stats')} style={styles.menuItem}>Stats</p>
+              <p onClick={() => navigateTo('/about')} style={styles.menuItem}>About</p>
+            </div>
+          )}
         </div>
       </header>
-      
-      <h1>Behavior Stats</h1>
-      <div style={styles.statsContainer}>
-        {Object.entries(stats).map(([kid, categories]) => (
-          <div key={kid} style={styles.card}>
-            <h2>{kid}</h2>
-            {Object.entries(categories).map(([category, rating]) => (
-              <p key={category}>{category}: {'⭐'.repeat(rating)}{'☆'.repeat(5 - rating)}</p>
-            ))}
-          </div>
-        ))}
+
+      <div style={styles.content}>
+        <p>Here you can see the cumulative ratings for your children.</p>
+        {/* Placeholder for future stats visualization */}
+        <p>Coming soon...</p>
       </div>
+
+      <button onClick={() => navigate('/dashboard')} style={styles.backButton}>Back to Dashboard</button>
     </div>
   );
 }
@@ -64,48 +52,46 @@ const styles = {
     padding: '20px'
   },
   header: {
+    marginBottom: '30px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
-    padding: '10px 20px',
-    boxSizing: 'border-box'
+    width: '100%'
   },
-  logo: {
-    width: '120px',
-    height: 'auto'
+  content: {
+    marginBottom: '20px'
   },
-  userSection: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  userIcon: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    marginRight: '10px'
-  },
-  logoutButton: {
-    padding: '8px 12px',
+  backButton: {
+    marginTop: '30px',
+    padding: '12px 24px',
     backgroundColor: '#007BFF',
     color: 'white',
     border: 'none',
-    borderRadius: '6px',
+    borderRadius: '8px',
     cursor: 'pointer'
   },
-  statsContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: '20px',
-    width: '100%',
-    maxWidth: '800px',
-    margin: '20px 0'
+  menuContainer: {
+    position: 'relative'
   },
-  card: {
-    padding: '20px',
+  menuButton: {
+    background: 'none',
+    border: 'none',
+    fontSize: '1.5rem',
+    cursor: 'pointer'
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    right: 0,
+    top: '2.5rem',
+    backgroundColor: 'white',
     border: '1px solid #ddd',
-    borderRadius: '10px',
-    backgroundColor: 'white'
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    zIndex: 1000
+  },
+  menuItem: {
+    padding: '10px 20px',
+    cursor: 'pointer'
   }
 };
 
