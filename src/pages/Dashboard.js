@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
-<img src={`${process.env.PUBLIC_URL}/STARBOARD.gif`} alt="Starboard Logo" />
-import defaultPic from '/public/default_kid.png';
+
+// Define paths to images
+const defaultPic = `${process.env.PUBLIC_URL}/default_kid.png`;
+const miraPic = `${process.env.PUBLIC_URL}/mira.png`;
+const sheaPic = `${process.env.PUBLIC_URL}/shea.png`;
+const logo = `${process.env.PUBLIC_URL}/STARBOARD.gif`;
 
 const kids = [
-  { id: 1, name: 'Mira', image: '/public/mira.png' },
-  { id: 2, name: 'Shea', image: '/public/shea.png' }
+  { id: 1, name: 'Mira', image: miraPic },
+  { id: 2, name: 'Shea', image: sheaPic }
 ];
 
 function Dashboard() {
@@ -39,7 +43,7 @@ function Dashboard() {
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <img src={STARBOARD} alt="Starboard Logo" style={styles.logo} />
+        <img src={logo} alt="Starboard Logo" style={styles.logo} />
         <div style={styles.userSection}>
           <img src={auth.currentUser?.photoURL} alt="User" style={styles.userIcon} />
           <button onClick={logout} style={styles.logoutButton}>Logout</button>
@@ -50,7 +54,7 @@ function Dashboard() {
       <div style={styles.cardContainer}>
         {kids.map((kid) => (
           <div key={kid.id} style={styles.card} onClick={() => handleSelectKid(kid)}>
-            <img src={kid.image || defaultPic} alt={kid.name} style={styles.kidImage} />
+            <img src={kid.image} alt={kid.name} style={styles.kidImage} />
             <p>{kid.name}</p>
           </div>
         ))}
