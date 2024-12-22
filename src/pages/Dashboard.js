@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
+import { useNavigate } from 'react-router-dom';
 
 const kids = [
   { id: 1, name: 'Mira', image: '/mira.png' },
@@ -15,6 +16,7 @@ function Dashboard() {
   const [recommend, setRecommend] = useState(false);
   const [activeCategory, setActiveCategory] = useState(initialCategories[0]);
   const [categories, setCategories] = useState(initialCategories);
+  const navigate = useNavigate();
 
   const handleSelectKid = (kid) => {
     setSelectedKid(kid);
@@ -64,6 +66,8 @@ function Dashboard() {
           </div>
         ))}
       </div>
+
+      <button onClick={() => navigate('/stats')} style={styles.statsButton}>View Stats</button>
 
       {selectedKid && (
         <div style={styles.modal}>
@@ -145,49 +149,10 @@ const styles = {
     borderRadius: '6px',
     cursor: 'pointer'
   },
-  cardContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-    gap: '20px',
-    width: '100%',
-    maxWidth: '600px',
-    margin: '0 auto'
-  },
-  card: {
-    cursor: 'pointer',
-    padding: '20px',
-    border: '1px solid #ddd',
-    borderRadius: '10px'
-  },
-  kidImage: {
-    width: '100px',
-    height: '100px',
-    borderRadius: '10px'
-  },
-  modal: {
-    marginTop: '20px',
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '10px',
-    backgroundColor: 'white'
-  },
-  categoryTabs: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: '10px'
-  },
-  starsContainer: {
-    marginBottom: '15px'
-  },
-  star: {
-    fontSize: '2.5rem',
-    cursor: 'pointer'
-  },
-  saveButton: {
-    marginTop: '15px',
-    padding: '10px 24px',
-    backgroundColor: '#007BFF',
+  statsButton: {
+    marginTop: '30px',
+    padding: '12px 24px',
+    backgroundColor: '#28a745',
     color: 'white',
     border: 'none',
     borderRadius: '8px',
