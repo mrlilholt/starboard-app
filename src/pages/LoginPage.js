@@ -29,7 +29,7 @@ function LoginPage() {
       }
 
       alert(`Welcome, ${user.displayName}!`);
-      navigate('/dashboard');  // <-- Redirect after successful login
+      navigate('/dashboard');  // Redirect after successful login
     } catch (error) {
       console.error('Login Failed:', error.message);
       alert('Failed to sign in. Please try again.');
@@ -37,11 +37,38 @@ function LoginPage() {
   };
 
   return (
-    <div>
+    <div style={styles.container}>
+      <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
       <h1>Welcome to Starboard!</h1>
-      <button onClick={handleLogin}>Login with Google</button>
+      <button style={styles.button} onClick={handleLogin}>Login with Google</button>
     </div>
   );
 }
+
+// Basic CSS-in-JS for quick styling
+const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    textAlign: 'center'
+  },
+  logo: {
+    width: '300px',
+    marginBottom: '20px'
+  },
+  button: {
+    padding: '12px 24px',
+    fontSize: '1rem',
+    cursor: 'pointer',
+    backgroundColor: '#007BFF',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    transition: 'background-color 0.3s ease'
+  }
+};
 
 export default LoginPage;
