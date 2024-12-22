@@ -6,7 +6,7 @@ const db = getFirestore();
 
 function Dashboard() {
   const [hover, setHover] = useState(0);
-  const [user, setUser] = useState(null);
+  const [user] = useState(auth.currentUser);  // Directly use auth.currentUser to avoid the setUser warning
 
   const handleLogout = async () => {
     await auth.signOut();
