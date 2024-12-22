@@ -173,10 +173,6 @@ const styles = {
     padding: '10px',
     cursor: 'pointer'
   },
-  largeStar: {
-    fontSize: '3rem',
-    cursor: 'pointer'
-  },
   saveButton: {
     marginTop: '15px',
     padding: '10px 24px',
