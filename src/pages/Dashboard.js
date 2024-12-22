@@ -7,13 +7,15 @@ const kids = [
   { id: 2, name: 'Shea', image: '/shea.png' }
 ];
 
-const categories = ['Cleaning', 'Kindness', 'Listening', 'Helping', 'Sharing'];
+const initialCategories = ['Cleaning', 'Kindness', 'Listening', 'Helping', 'Sharing'];
 
 function Dashboard() {
   const [selectedKid, setSelectedKid] = useState(null);
   const [ratings, setRatings] = useState({});
   const [recommend, setRecommend] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(categories[0]);
+  const [activeCategory, setActiveCategory] = useState(initialCategories[0]);
+  const [categories, setCategories] = useState(initialCategories);
+  const [newCategory, setNewCategory] = useState('');
 
   const handleSelectKid = (kid) => {
     setSelectedKid(kid);
@@ -30,6 +32,13 @@ function Dashboard() {
     console.log(`Saving ratings for ${selectedKid.name}:`, ratings);
     if (recommend) console.log(`${selectedKid.name} marked as Would Not Recommend`);
     setSelectedKid(null);
+  };
+
+  const handleAddCategory = () => {
+    if (newCategory && !categories.includes(newCategory)) {
+      setCategories((prev) => [...prev, newCategory]);
+      setNewCategory('');
+    }
   };
 
   const logout = async () => {
@@ -78,6 +87,7 @@ function Dashboard() {
               {i < ratings[activeCategory] ? '⭐' : '☆'}
             </span>
           ))}
+          <button onClick={handleSave} style={styles.saveButton}>Save</button>
           {ratings[activeCategory] === 0 && (
             <div>
               <input
@@ -87,7 +97,15 @@ function Dashboard() {
               /> Would Not Recommend
             </div>
           )}
-          <button onClick={handleSave} style={styles.saveButton}>Save</button>
+          <div style={styles.addCategoryContainer}>
+            <input
+              type="text"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              placeholder="Add new category"
+            />
+            <button onClick={handleAddCategory}>Add</button>
+          </div>
         </div>
       )}
     </div>
@@ -184,6 +202,9 @@ const styles = {
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer'
+  },
+  addCategoryContainer: {
+    marginTop: '20px'
   }
 };
 
