@@ -13,49 +13,36 @@ const initialCategories = ['Cleaning', 'Kindness', 'Listening', 'Helping', 'Shar
 function Dashboard() {
   const [selectedKid, setSelectedKid] = useState(null);
   const [ratings, setRatings] = useState({});
-  // const [recommend, setRecommend] = useState(false);  // Commented out if unused
   const [categories, setCategories] = useState(initialCategories);
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
-  //const [kidData, setKidData] = useState(null);
+  const [kidData, setKidData] = useState({});
 
-  // Memoized data processing to avoid unnecessary re-renders
-  const processCumulativeData = useCallback(() => {
-    console.log("Processing cumulative data...");
-  }, []);
-
-  // Memoized fetchStats to avoid effect re-triggering
   const fetchStats = useCallback(async () => {
     console.log("Fetching stats...");
-    // Fetch logic here if needed
   }, []);
 
   useEffect(() => {
     fetchStats();
-  }, [fetchStats, processCumulativeData]);  // Dependency array includes memoized functions
+  }, [fetchStats]);  // Only dependent on fetchStats
 
-  // Real-time listener for selected kid's star data
   useEffect(() => {
     if (selectedKid) {
       const docRef = doc(db, 'stars', selectedKid.name);
-
       const unsubscribe = onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists()) {
           setKidData(docSnap.data());
         } else {
-          // Initialize empty data if no document exists
           setKidData({});
         }
       });
-
-      return () => unsubscribe();  // Cleanup to prevent memory leaks
+      return () => unsubscribe();
     }
   }, [selectedKid]);
 
   const handleSelectKid = (kid) => {
     setSelectedKid(kid);
     setRatings({});
-    // setRecommend(false);  // Reset recommendation (commented if unused)
   };
 
   const handleRating = (category, rating) => {
@@ -69,7 +56,6 @@ function Dashboard() {
     const docRef = doc(db, 'stars', selectedKid.name);
     const docSnap = await getDoc(docRef);
 
-    // Initialize the doc if it doesn't exist
     if (!docSnap.exists()) {
       await setDoc(docRef, {
         history: [],
@@ -77,7 +63,6 @@ function Dashboard() {
       });
     }
 
-    // Update Firestore with new ratings
     const updates = {};
     Object.entries(ratings).forEach(([category, stars]) => {
       updates[category] = (docSnap.data()?.[category] || 0) + stars;
@@ -92,7 +77,6 @@ function Dashboard() {
     } catch (error) {
       console.error("Error saving data:", error);
     }
-
     setSelectedKid(null);
   };
 
@@ -182,6 +166,7 @@ function Dashboard() {
     </div>
   );
 }
+
 
 const styles = {
   container: {

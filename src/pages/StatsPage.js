@@ -1,20 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
+import React, { useState, useEffect, useCallback } from 'react';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-} from 'chart.js';
-
-ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend, Filler);
+import { Bar } from 'react-chartjs-2';
 
 const kids = [
   { id: 1, name: 'Mira' },
@@ -23,170 +10,82 @@ const kids = [
 
 function StatsPage() {
   const [selectedKid, setSelectedKid] = useState(null);
-  const [kidData, setKidData] = useState({});
-  const [chartData, setChartData] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [kidData, setKidData] = useState(null);
+  const [chartData, setChartData] = useState({});
 
+  const fetchStats = useCallback(async () => {
+    if (selectedKid) {
+      const docRef = doc(db, 'stars', selectedKid.name);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setKidData(docSnap.data());
+        processCumulativeData(docSnap.data());
+      } else {
+        setKidData(null);
+      }
+    }
+  }, [selectedKid]);
+
+  // Real-time listener for kid stats
   useEffect(() => {
     if (selectedKid) {
       const docRef = doc(db, 'stars', selectedKid.name);
-
       const unsubscribe = onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists()) {
-          const data = docSnap.data();
-          setKidData(data);
-          processCumulativeData(data.history);
-        } else {
-          setKidData({});
-          setChartData(null);
+          setKidData(docSnap.data());
+          processCumulativeData(docSnap.data());
         }
       });
-
       return () => unsubscribe();
     }
-  }, [selectedKid, selectedCategory, startDate, endDate]);
+  }, [selectedKid]);
 
-  const processCumulativeData = (history) => {
-    if (!history) return;
-
-    let cumulativeSum = 0;
-    const filteredHistory = history.filter((day) => {
-      const date = new Date(day.date);
-      const inRange = (!startDate || date >= new Date(startDate)) &&
-                      (!endDate || date <= new Date(endDate));
-
-      return selectedCategory === 'All' || day.category === selectedCategory ? inRange : false;
-    });
-
-    const labels = filteredHistory.map((_, i) => `Day ${i + 1}`);
-    const dataset = filteredHistory.map((day) => {
-      cumulativeSum += day.stars;
-      return cumulativeSum;
-    });
-
-    const annotations = dataset.map((value, index) => {
-      if (value % 50 === 0) {
-        return {
-          type: 'line',
-          scaleID: 'y',
-          value,
-          borderColor: 'red',
-          borderWidth: 2,
-          label: {
-            content: `🎉 ${value} Stars!`,
-            enabled: true,
-            position: 'start'
-          }
-        };
-      }
-      return null;
-    }).filter(Boolean);
+  // Process cumulative data for chart
+  const processCumulativeData = useCallback((data) => {
+    const history = data.history || [];
+    const labels = history.map((_, index) => `Day ${index + 1}`);
+    const cumulativeStars = history.reduce((acc, curr) => {
+      const total = acc.length ? acc[acc.length - 1] + curr : curr;
+      return [...acc, total];
+    }, []);
 
     setChartData({
       labels,
       datasets: [
         {
-          label: 'Cumulative Star Count',
-          data: dataset,
-          fill: true,
-          backgroundColor: 'rgba(75,192,192,0.2)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          tension: 0.3,
-          pointRadius: 5,
+          label: 'Cumulative Stars',
+          data: cumulativeStars,
+          backgroundColor: 'rgba(75, 192, 192, 0.6)',
         }
-      ],
-      options: {
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: (tooltipItem) => {
-                return `Total Stars: ${tooltipItem.raw}`;
-              }
-            }
-          },
-          annotation: {
-            annotations
-          }
-        }
-      }
+      ]
     });
-  };
+  }, []);
 
-  const totalStars = Object.entries(kidData)
-    .filter(([key]) => key !== 'history')
-    .reduce((acc, [_, val]) => acc + val, 0);
-
-  const categories = Object.keys(kidData).filter((key) => key !== 'history');
+  // Fetch data when kid is selected
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
 
   return (
     <div style={styles.container}>
-      <h1>Starboard Stats</h1>
-
-      <div style={styles.selectKid}>
+      <h1>Stats Page</h1>
+      <div>
         {kids.map((kid) => (
           <button
             key={kid.id}
-            style={styles.kidButton}
             onClick={() => setSelectedKid(kid)}
+            style={styles.kidButton}
           >
             {kid.name}
           </button>
         ))}
       </div>
 
-      {selectedKid && (
+      {kidData && (
         <div style={styles.statsContainer}>
           <h2>{selectedKid.name}'s Stats</h2>
-          <p>Total Stars: {totalStars}</p>
-
-          <div style={styles.filters}>
-            <label>Filter by Category:</label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              style={styles.dropdown}
-            >
-              <option value="All">All</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-
-            <label>Start Date:</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              style={styles.dateInput}
-            />
-
-            <label>End Date:</label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              style={styles.dateInput}
-            />
-          </div>
-
-          {chartData && (
-            <div style={styles.chartContainer}>
-              <Line data={chartData} options={chartData.options} />
-            </div>
-          )}
-
-          <div style={styles.breakdown}>
-            <h3>Breakdown by Category:</h3>
-            {categories.map((cat) => (
-              <p key={cat}>
-                {cat}: {kidData[cat]} ⭐
-              </p>
-            ))}
-          </div>
+          <p>Total Stars: {kidData.history?.reduce((a, b) => a + b, 0)}</p>
+          <Bar data={chartData} />
         </div>
       )}
     </div>
@@ -199,48 +98,22 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '20px',
-    textAlign: 'center'
-  },
-  selectKid: {
-    display: 'flex',
-    gap: '20px',
-    margin: '20px 0'
+    padding: '20px'
   },
   kidButton: {
+    margin: '10px',
     padding: '10px 20px',
-    fontSize: '18px',
+    fontSize: '16px',
     cursor: 'pointer',
+    border: 'none',
     borderRadius: '8px',
-    border: '1px solid #ccc'
+    backgroundColor: '#007BFF',
+    color: 'white'
   },
   statsContainer: {
     marginTop: '30px',
-    textAlign: 'left'
-  },
-  filters: {
-    display: 'flex',
-    gap: '20px',
-    alignItems: 'center',
-    margin: '20px 0'
-  },
-  dropdown: {
-    padding: '8px',
-    fontSize: '16px',
-    borderRadius: '6px'
-  },
-  dateInput: {
-    padding: '6px',
-    fontSize: '16px',
-    borderRadius: '6px'
-  },
-  chartContainer: {
-    margin: '30px 0',
-    width: '600px'
-  },
-  breakdown: {
-    marginTop: '20px',
-    textAlign: 'left'
+    width: '80%',
+    maxWidth: '800px'
   }
 };
 
