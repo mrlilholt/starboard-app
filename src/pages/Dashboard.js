@@ -169,17 +169,6 @@ const styles = {
     height: '50px',
     cursor: 'pointer'
   },
-  categoryDropdown: {
-    position: 'absolute',  // Ensure dropdown stays under toybox
-    top: '60px',           // Adjust based on toybox icon size
-    left: '0',
-    backgroundColor: '#333',
-    color: 'white',
-    borderRadius: '8px',
-    padding: '10px',
-    zIndex: '100',        // Ensure it appears above other content
-    boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-  },
   categoryItem: {
     padding: '10px',
     cursor: 'pointer'
@@ -195,6 +184,57 @@ const styles = {
     color: 'white',
     border: 'none',
     borderRadius: '8px',
+    cursor: 'pointer'
+  },
+  cardContainer: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: '20px',
+    width: '100%',
+    maxWidth: '800px',
+    margin: '0 auto'
+  },
+  card: {
+    cursor: 'pointer',
+    padding: '10px',
+    border: '1px solid #ddd',
+    borderRadius: '10px',
+    overflow: 'hidden',  // Ensure image fits inside card
+    textAlign: 'center',
+  },
+  kidImage: {
+    width: '100%',
+    height: 'auto',
+    maxHeight: '400px',  // Limit image height
+    objectFit: 'cover',
+    borderRadius: '10px'
+  },
+  modal: {
+    marginTop: '20px',
+    padding: '20px',
+    border: '1px solid #ccc',
+    borderRadius: '10px',
+    backgroundColor: 'white',
+    maxWidth: '600px',
+    width: '90%',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+    overflowY: 'auto',
+    maxHeight: '80vh',   // Limit modal height
+  },
+  categoryDropdown: {
+    position: 'absolute',
+    top: '50px',  // Adjust dropdown position
+    left: '0',
+    backgroundColor: '#333',
+    color: 'white',
+    borderRadius: '8px',
+    padding: '10px',
+    zIndex: '100',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    minWidth: '150px'
+  },
+  largeStar: {
+    fontSize: '3rem',  // Increase star size
     cursor: 'pointer'
   }
 };
