@@ -14,30 +14,26 @@ function Dashboard() {
   const [selectedKid, setSelectedKid] = useState(null);
   const [ratings, setRatings] = useState({});
   const [recommend, setRecommend] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(null);
   const [categories, setCategories] = useState(initialCategories);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [showCategories, setShowCategories] = useState(false);
   const navigate = useNavigate();
 
   const handleSelectKid = (kid) => {
     setSelectedKid(kid);
     setRatings({});
     setRecommend(false);
-    setActiveCategory(null);
   };
 
-  const handleRating = (rating) => {
-    if (activeCategory) {
-      setRatings((prev) => ({ ...prev, [activeCategory]: rating }));
-      if (rating > 0) setRecommend(false);
-    }
+  const handleRating = (category, rating) => {
+    setRatings((prev) => ({ ...prev, [category]: rating }));
+    setShowCategories(false);
   };
 
   const handleSave = () => {
     console.log(`Saving ratings for ${selectedKid.name}:`, ratings);
     if (recommend) console.log(`${selectedKid.name} marked as Would Not Recommend`);
     setSelectedKid(null);
-    setActiveCategory(null);
   };
 
   const handleAddCategory = () => {
@@ -59,17 +55,8 @@ function Dashboard() {
         <div style={styles.userSection}>
           <img src={auth.currentUser?.photoURL} alt="User" style={styles.userIcon} />
           <button onClick={logout} style={styles.logoutButton}>Logout</button>
-          <button onClick={() => setMenuOpen(!menuOpen)} style={styles.menuButton}>☰</button>
         </div>
       </header>
-
-      {menuOpen && (
-        <div style={styles.dropdownMenu}>
-          <p onClick={() => navigate('/dashboard')}>Dashboard</p>
-          <p onClick={() => navigate('/stats')}>Stats</p>
-          <p onClick={() => navigate('/about')}>About</p>
-        </div>
-      )}
 
       <h1>Rate Your Child's Behavior</h1>
       <div style={styles.cardContainer}>
@@ -84,34 +71,49 @@ function Dashboard() {
       {selectedKid && (
         <div style={styles.modal}>
           <h2>Rate {selectedKid.name}</h2>
-          <div style={styles.categoryTabs}>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                style={cat === activeCategory ? styles.activeTab : styles.tab}
-                onClick={() => setActiveCategory(cat)}>
-                {cat}
-              </button>
-            ))}
-            <button onClick={handleAddCategory} style={styles.addButton}>+ Add Category</button>
+          <div>
+            <img 
+              src="/toybox-icon.png" 
+              alt="Select Category" 
+              style={styles.toyBoxIcon} 
+              onClick={() => setShowCategories(!showCategories)}
+            />
+            {showCategories && (
+              <div style={styles.categoryDropdown}>
+                {categories.map((cat) => (
+                  <div 
+                    key={cat} 
+                    style={styles.categoryItem}
+                    onClick={() => setActiveCategory(cat)}>
+                    {cat}
+                  </div>
+                ))}
+                <div 
+                  style={styles.addCategory} 
+                  onClick={handleAddCategory}>
+                  + Add Category
+                </div>
+              </div>
+            )}
           </div>
 
           {activeCategory && (
-            <div style={styles.starsContainer}>
-              {[...Array(5)].map((_, i) => (
-                <span
-                  key={i}
-                  style={styles.star}
-                  onClick={() => handleRating(i + 1)}>
-                  {i < ratings[activeCategory] ? '⭐' : '☆'}
-                </span>
-              ))}
+            <div>
+              <h3>{activeCategory}</h3>
+              <div style={styles.starsContainer}>
+                {[...Array(5)].map((_, i) => (
+                  <span
+                    key={i}
+                    style={styles.largeStar}
+                    onClick={() => handleRating(activeCategory, i + 1)}>
+                    {i < (ratings[activeCategory] || 0) ? '⭐' : '☆'}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
-          
-          {activeCategory && (
-            <button onClick={handleSave} style={styles.saveButton}>Save</button>
-          )}
+
+          <button onClick={handleSave} style={styles.saveButton}>Save</button>
         </div>
       )}
     </div>
@@ -158,50 +160,33 @@ const styles = {
     borderRadius: '6px',
     cursor: 'pointer'
   },
-  menuButton: {
-    marginLeft: '10px',
+  toyBoxIcon: {
+    width: '50px',
+    height: '50px',
+    cursor: 'pointer'
+  },
+  categoryDropdown: {
+    backgroundColor: '#333',
+    color: 'white',
+    borderRadius: '8px',
+    padding: '10px'
+  },
+  categoryItem: {
+    padding: '10px',
+    cursor: 'pointer'
+  },
+  largeStar: {
+    fontSize: '3rem',
+    cursor: 'pointer'
+  },
+  saveButton: {
+    marginTop: '15px',
+    padding: '10px 24px',
     backgroundColor: '#007BFF',
     color: 'white',
     border: 'none',
-    padding: '8px',
-    borderRadius: '6px',
+    borderRadius: '8px',
     cursor: 'pointer'
-  },
-  dropdownMenu: {
-    position: 'absolute',
-    top: '60px',
-    right: '30px',
-    backgroundColor: '#333',
-    color: 'white',
-    borderRadius: '6px',
-    padding: '10px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-    display: 'flex',
-    flexDirection: 'column',
-    textAlign: 'left'
-  },
-  cardContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: '20px',
-    width: '100%',
-    maxWidth: '900px',
-    margin: '0 auto'
-  },
-  card: {
-    cursor: 'pointer',
-    border: '1px solid #ddd',
-    borderRadius: '10px',
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
-  kidImage: {
-    width: '100%',
-    height: '300px',  // Uniform height for all images
-    objectFit: 'cover',  // Ensures the image scales correctly and crops if necessary
-    borderBottom: '1px solid #ddd'  // Separates image from name
   }
 };
 
