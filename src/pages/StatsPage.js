@@ -13,34 +13,7 @@ function StatsPage() {
   const [kidData, setKidData] = useState(null);
   const [chartData, setChartData] = useState({});
 
-  const fetchStats = useCallback(async () => {
-    if (selectedKid) {
-      const docRef = doc(db, 'stars', selectedKid.name);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setKidData(docSnap.data());
-        processCumulativeData(docSnap.data());
-      } else {
-        setKidData(null);
-      }
-    }
-  }, [selectedKid]);
-
-  // Real-time listener for kid stats
-  useEffect(() => {
-    if (selectedKid) {
-      const docRef = doc(db, 'stars', selectedKid.name);
-      const unsubscribe = onSnapshot(docRef, (docSnap) => {
-        if (docSnap.exists()) {
-          setKidData(docSnap.data());
-          processCumulativeData(docSnap.data());
-        }
-      });
-      return () => unsubscribe();
-    }
-  }, [selectedKid]);
-
-  // Process cumulative data for chart
+  // Process Cumulative Data
   const processCumulativeData = useCallback((data) => {
     const history = data.history || [];
     const labels = history.map((_, index) => `Day ${index + 1}`);
@@ -61,7 +34,35 @@ function StatsPage() {
     });
   }, []);
 
-  // Fetch data when kid is selected
+  // Fetch Stats (Memoized)
+  const fetchStats = useCallback(async () => {
+    if (selectedKid) {
+      const docRef = doc(db, 'stars', selectedKid.name);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setKidData(docSnap.data());
+        processCumulativeData(docSnap.data());
+      } else {
+        setKidData(null);
+      }
+    }
+  }, [selectedKid, processCumulativeData]);  // Dependency Fixed
+
+  // Real-time Listener
+  useEffect(() => {
+    if (selectedKid) {
+      const docRef = doc(db, 'stars', selectedKid.name);
+      const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          setKidData(docSnap.data());
+          processCumulativeData(docSnap.data());
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, [selectedKid, processCumulativeData]);  // Dependency Fixed
+
+  // Fetch stats on kid selection
   useEffect(() => {
     fetchStats();
   }, [fetchStats]);

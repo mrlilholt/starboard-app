@@ -16,7 +16,8 @@ function Dashboard() {
   const [categories, setCategories] = useState(initialCategories);
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
-  const [kidData, setKidData] = useState({});
+// eslint-disable-next-line no-unused-vars
+const [kidData, setKidData] = useState(null);
 
   const fetchStats = useCallback(async () => {
     console.log("Fetching stats...");
