@@ -79,14 +79,16 @@ function Dashboard() {
             ))}
             <button onClick={handleAddCategory} style={styles.addButton}>+ Add Category</button>
           </div>
-          {[...Array(5)].map((_, i) => (
-            <span 
-              key={i} 
-              style={styles.star} 
-              onClick={() => handleRating(activeCategory, i + 1)}>
-              {i < ratings[activeCategory] ? '⭐' : '☆'}
-            </span>
-          ))}
+          <div style={styles.starsContainer}>
+            {[...Array(5)].map((_, i) => (
+              <span 
+                key={i} 
+                style={styles.star} 
+                onClick={() => handleRating(activeCategory, i + 1)}>
+                {i < ratings[activeCategory] ? '⭐' : '☆'}
+              </span>
+            ))}
+          </div>
           <button onClick={handleSave} style={styles.saveButton}>Save</button>
           {ratings[activeCategory] === 0 && (
             <div>
@@ -168,18 +170,8 @@ const styles = {
     gap: '10px',
     marginBottom: '10px'
   },
-  tab: {
-    padding: '8px 16px',
-    border: '1px solid #ddd',
-    cursor: 'pointer',
-    borderRadius: '6px'
-  },
-  activeTab: {
-    padding: '8px 16px',
-    border: '1px solid #007BFF',
-    backgroundColor: '#007BFF',
-    color: 'white',
-    borderRadius: '6px'
+  starsContainer: {
+    marginBottom: '15px'
   },
   star: {
     fontSize: '2rem',
