@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { signOut } from 'firebase/auth';
-import { auth } from '../firebase/firebase';
-import { doc, setDoc, updateDoc, getDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase/firebase';
 import React, { useState, useCallback } from 'react';
+import { signOut } from 'firebase/auth';
+import { doc, setDoc, updateDoc, getDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
+import { auth, db } from '../firebase/firebase';
 
 
 const kids = [
