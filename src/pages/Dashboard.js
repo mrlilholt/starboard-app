@@ -17,7 +17,7 @@ function Dashboard() {
   const [categories, setCategories] = useState(initialCategories);
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
-  const [kidData, setKidData] = useState(null);
+  //const [kidData, setKidData] = useState(null);
 
   // Memoized data processing to avoid unnecessary re-renders
   const processCumulativeData = useCallback(() => {
