@@ -48,10 +48,6 @@ function Dashboard() {
     window.location.href = '/';
   };
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
-
   return (
     <div style={styles.container}>
       <header style={styles.header}>
@@ -59,15 +55,15 @@ function Dashboard() {
         <div style={styles.userSection}>
           <img src={auth.currentUser?.photoURL} alt="User" style={styles.userIcon} />
           <button onClick={logout} style={styles.logoutButton}>Logout</button>
-          <button onClick={toggleMenu} style={styles.menuButton}>☰</button>
+          <button onClick={() => setMenuOpen(!menuOpen)} style={styles.menuButton}>☰</button>
         </div>
       </header>
 
       {menuOpen && (
         <div style={styles.menu}>
-          <button onClick={() => navigate('/dashboard')} style={styles.menuItem}>Dashboard</button>
-          <button onClick={() => navigate('/stats')} style={styles.menuItem}>Stats</button>
-          <button onClick={() => navigate('/about')} style={styles.menuItem}>About</button>
+          <button onClick={() => navigate('/dashboard')}>Dashboard</button>
+          <button onClick={() => navigate('/stats')}>Stats</button>
+          <button onClick={() => navigate('/about')}>About</button>
         </div>
       )}
 
@@ -86,8 +82,8 @@ function Dashboard() {
           <h2>Rate {selectedKid.name}</h2>
           <div style={styles.categoryTabs}>
             {categories.map((cat) => (
-              <button 
-                key={cat} 
+              <button
+                key={cat}
                 style={cat === activeCategory ? styles.activeTab : styles.tab}
                 onClick={() => setActiveCategory(cat)}>
                 {cat}
@@ -97,24 +93,15 @@ function Dashboard() {
           </div>
           <div style={styles.starsContainer}>
             {[...Array(5)].map((_, i) => (
-              <span 
-                key={i} 
-                style={styles.star} 
+              <span
+                key={i}
+                style={styles.star}
                 onClick={() => handleRating(activeCategory, i + 1)}>
                 {i < ratings[activeCategory] ? '⭐' : '☆'}
               </span>
             ))}
           </div>
           <button onClick={handleSave} style={styles.saveButton}>Save</button>
-          {ratings[activeCategory] === 0 && (
-            <div>
-              <input
-                type="checkbox"
-                checked={recommend}
-                onChange={() => setRecommend(!recommend)}
-              /> Would Not Recommend
-            </div>
-          )}
         </div>
       )}
     </div>
@@ -163,11 +150,10 @@ const styles = {
   },
   menuButton: {
     marginLeft: '10px',
-    padding: '8px',
-    fontSize: '1.2rem',
-    backgroundColor: '#333',
+    backgroundColor: '#007BFF',
     color: 'white',
     border: 'none',
+    padding: '8px',
     borderRadius: '6px',
     cursor: 'pointer'
   },
@@ -175,19 +161,26 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     position: 'absolute',
-    top: '60px',
+    top: '70px',
     right: '20px',
-    backgroundColor: '#f1f1f1',
-    border: '1px solid #ddd',
-    borderRadius: '6px',
-    padding: '10px'
+    backgroundColor: '#fff',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    padding: '10px',
+    borderRadius: '8px'
   },
-  menuItem: {
-    padding: '10px 15px',
-    backgroundColor: 'transparent',
-    border: 'none',
+  cardContainer: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+    gap: '20px',
+    width: '100%',
+    maxWidth: '600px',
+    margin: '0 auto'
+  },
+  card: {
     cursor: 'pointer',
-    textAlign: 'left'
+    padding: '20px',
+    border: '1px solid #ddd',
+    borderRadius: '10px'
   }
 };
 
