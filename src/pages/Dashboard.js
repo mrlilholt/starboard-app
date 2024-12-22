@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
-import STARBOARD from '/public/STARBOARD.gif';
+<img src={`${process.env.PUBLIC_URL}/STARBOARD.gif`} alt="Starboard Logo" />
 import defaultPic from '/public/default_kid.png';
 
 const kids = [
