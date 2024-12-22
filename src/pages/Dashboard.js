@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { getFirestore, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { startTimer } from '../utils/timer';
+import { app } from '../firebase/firebase';
+
 startTimer(() => {
   console.log('Timer done!');
 }, 60); // 60-second countdown
