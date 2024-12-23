@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { Link } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
@@ -15,27 +15,29 @@ function LeaderboardPage() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await Promise.all(
-        kids.map(async (kid) => {
-          const docRef = doc(db, 'stars', kid.name);
-          const docSnap = await getDoc(docRef);
-          const totalStars = docSnap.exists()
-            ? Object.values(docSnap.data()).reduce(
-                (acc, val) => (typeof val === 'number' ? acc + val : acc),
-                0
-              )
-            : 0;
-          return { ...kid, totalStars };
-        })
-      );
+    const unsubscribers = [];
 
-      // Sort by total stars (highest first)
-      data.sort((a, b) => b.totalStars - a.totalStars);
-      setLeaderboard(data);
-    };
+    kids.forEach((kid) => {
+      const docRef = doc(db, 'stars', kid.name);
+      const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        const totalStars = docSnap.exists()
+          ? Object.values(docSnap.data()).reduce(
+              (acc, val) => (typeof val === 'number' ? acc + val : acc),
+              0
+            )
+          : 0;
 
-    fetchData();
+        setLeaderboard((prev) => {
+          const updated = prev.filter((item) => item.id !== kid.id);
+          return [...updated, { ...kid, totalStars }].sort(
+            (a, b) => b.totalStars - a.totalStars
+          );
+        });
+      });
+      unsubscribers.push(unsubscribe);
+    });
+
+    return () => unsubscribers.forEach((unsub) => unsub());
   }, []);
 
   const toggleMenu = () => {
@@ -49,7 +51,6 @@ function LeaderboardPage() {
 
   return (
     <div style={styles.container}>
-      {/* HEADER WITH MENU */}
       <header style={styles.header}>
         <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
 
@@ -62,21 +63,16 @@ function LeaderboardPage() {
             <div style={styles.menuDropdown}>
               <Link to="/dashboard" style={styles.menuItem}>Dashboard</Link>
               <Link to="/stats" style={styles.menuItem}>Stats</Link>
-              <Link to="/leaderboard" style={styles.menuItem}>Leaderboard</Link>
               <Link to="/about" style={styles.menuItem}>About</Link>
               <div style={styles.menuItem} onClick={logout}>Logout</div>
             </div>
           )}
-
-          <img
-            src={auth.currentUser?.photoURL}
-            alt="User"
-            style={styles.userIcon}
-          />
+          <img src={auth.currentUser?.photoURL} alt="User" style={styles.userIcon} />
         </div>
       </header>
 
       <h1>🏆 Leaderboard 🏆</h1>
+
       <div style={styles.leaderboard}>
         {leaderboard.map((kid, index) => (
           <div key={kid.id} style={styles.card}>
@@ -96,26 +92,26 @@ function LeaderboardPage() {
 const styles = {
   container: {
     textAlign: 'center',
-    padding: '40px'
+    padding: '20px',
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '40px'
+    marginBottom: '30px',
   },
   rightSection: {
     display: 'flex',
     alignItems: 'center',
-    position: 'relative'
+    position: 'relative',
   },
   logo: {
-    width: '150px'
+    width: '120px',
   },
   menuIcon: {
     fontSize: '2rem',
     cursor: 'pointer',
-    marginRight: '20px'
+    marginRight: '20px',
   },
   menuDropdown: {
     position: 'absolute',
@@ -124,49 +120,51 @@ const styles = {
     backgroundColor: 'white',
     borderRadius: '8px',
     boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-    zIndex: 100
+    zIndex: 100,
   },
   menuItem: {
     padding: '12px 20px',
     cursor: 'pointer',
     textDecoration: 'none',
     color: '#333',
-    display: 'block'
+    display: 'block',
   },
   userIcon: {
     width: '40px',
     height: '40px',
     borderRadius: '50%',
-    marginLeft: '10px'
+    marginLeft: '10px',
   },
   leaderboard: {
     display: 'flex',
-    justifyContent: 'center',
-    gap: '40px'
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '20px',
   },
   card: {
+    width: '90%',
+    maxWidth: '400px',
     padding: '20px',
     borderRadius: '10px',
     boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-    width: '300px',
     textAlign: 'center',
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   kidImage: {
     width: '100px',
     height: '100px',
     borderRadius: '50%',
-    marginBottom: '15px'
+    marginBottom: '15px',
   },
   starCount: {
-    fontSize: '1.5rem',
-    fontWeight: 'bold'
+    fontSize: '2rem',
+    fontWeight: 'bold',
   },
   leader: {
     color: '#007BFF',
     fontWeight: 'bold',
-    marginTop: '10px'
-  }
+    marginTop: '10px',
+  },
 };
 
 export default LeaderboardPage;
