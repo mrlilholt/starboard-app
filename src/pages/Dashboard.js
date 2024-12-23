@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { signOut } from 'firebase/auth';
 import { doc, setDoc, updateDoc, getDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebase';
-import { Link } from 'react-router-dom';  // Import for navigation
+import { Link } from 'react-router-dom';
 
 const kids = [
   { id: 1, name: 'Mira', image: '/mira.png' },
@@ -18,8 +18,7 @@ function Dashboard() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [kidData, setKidData] = useState(null);  // Real-time data from Firestore (unused for now)
+  const [kidData, setKidData] = useState(null);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -27,19 +26,15 @@ function Dashboard() {
 
   const fetchStats = useCallback(async () => {
     console.log("Fetching stats...");
-    // Placeholder for fetching logic
   }, []);
 
-  // Fetch stats on mount
   useEffect(() => {
     fetchStats();
-  }, [fetchStats]);  
+  }, [fetchStats]);
 
-  // Real-time listener for Firestore updates
   useEffect(() => {
     if (selectedKid) {
       const docRef = doc(db, 'stars', selectedKid.name);
-
       const unsubscribe = onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists()) {
           setKidData(docSnap.data());
@@ -47,7 +42,6 @@ function Dashboard() {
           setKidData({});
         }
       });
-
       return () => unsubscribe();
     }
   }, [selectedKid]);
@@ -70,7 +64,6 @@ function Dashboard() {
     const docRef = doc(db, 'stars', selectedKid.name);
     const docSnap = await getDoc(docRef);
 
-    // Initialize if not exists
     if (!docSnap.exists()) {
       await setDoc(docRef, {
         history: [],
@@ -78,13 +71,11 @@ function Dashboard() {
       });
     }
 
-    // Update Firestore ratings
     const updates = {};
     Object.entries(ratings).forEach(([category, stars]) => {
       updates[category] = (docSnap.data()?.[category] || 0) + stars;
     });
 
-    // Track daily stars
     const todayStars = Object.values(ratings).reduce((a, b) => a + b, 0);
     updates['history'] = arrayUnion(todayStars);
 
@@ -115,12 +106,12 @@ function Dashboard() {
     <div style={styles.container}>
       <header style={styles.header}>
         <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
-        
+
         <div style={styles.rightSection}>
           <div style={styles.menuIcon} onClick={toggleMenu}>
             ☰
           </div>
-          
+
           {menuOpen && (
             <div style={styles.menuDropdown}>
               <Link to="/dashboard" style={styles.menuItem}>Dashboard</Link>
@@ -130,10 +121,10 @@ function Dashboard() {
             </div>
           )}
 
-          <img 
-            src={auth.currentUser?.photoURL} 
-            alt="User" 
-            style={styles.userIcon} 
+          <img
+            src={auth.currentUser?.photoURL}
+            alt="User"
+            style={styles.userIcon}
           />
         </div>
       </header>
@@ -151,19 +142,19 @@ function Dashboard() {
       {selectedKid && (
         <div style={styles.modal}>
           <h2>Rate {selectedKid.name}</h2>
-          
+
           <div>
-            <img 
-              src="/toybox-icon.png" 
-              alt="Select Category" 
-              style={styles.toyBoxIcon} 
-              onClick={() => setShowCategories(!showCategories)} 
+            <img
+              src="/toybox-icon.png"
+              alt="Select Category"
+              style={styles.toyBoxIcon}
+              onClick={() => setShowCategories(!showCategories)}
             />
             {showCategories && (
               <div style={styles.categoryDropdown}>
                 {categories.map((cat) => (
-                  <div 
-                    key={cat} 
+                  <div
+                    key={cat}
                     style={styles.categoryItem}
                     onClick={() => setActiveCategory(cat)}>
                     {cat}
@@ -201,14 +192,9 @@ function Dashboard() {
   );
 }
 
-
 const styles = {
+  // Updated styles to fix card sizes, header alignment, and dropdown
   container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '100vh',
     textAlign: 'center',
     padding: '20px'
   },
@@ -216,46 +202,39 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
-    padding: '10px 20px',
-    boxSizing: 'border-box'
+    marginBottom: '20px'
   },
   rightSection: {
     display: 'flex',
     alignItems: 'center',
-    position: 'relative'
   },
   logo: {
-    width: '120px',
-    height: 'auto'
+    width: '150px',
   },
   menuIcon: {
     fontSize: '2rem',
     cursor: 'pointer',
     marginRight: '20px'
   },
-  menuDropdown: {
-    position: 'absolute',
-    top: '50px',
-    right: '0',
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-    zIndex: 100
-  },
-  menuItem: {
-    padding: '12px 20px',
-    cursor: 'pointer',
-    textDecoration: 'none',
-    color: '#333',
-    display: 'block'
-  },
   userIcon: {
     width: '40px',
-    height: '40px',
     borderRadius: '50%',
-    marginLeft: '10px'
-  }
+  },
+  cardContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '20px'
+  },
+  card: {
+    width: '200px',
+    cursor: 'pointer',
+    borderRadius: '10px',
+    overflow: 'hidden',
+  },
+  kidImage: {
+    width: '100%',
+    height: 'auto',
+  },
 };
 
 export default Dashboard;
