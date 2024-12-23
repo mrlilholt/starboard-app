@@ -99,12 +99,6 @@ const styles = {
     textAlign: 'center',
     padding: '20px',
   },
-  topBar: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '40px',
-  },
   logo: {
     width: '120px',
   },
@@ -122,7 +116,9 @@ const styles = {
     height: '50px',
     borderRadius: '50%',
     marginLeft: '10px',
+    objectFit: 'cover',  // Ensures the image fits the container
   },
+
   menuDropdown: {
     position: 'absolute',
     top: '80px',
@@ -140,8 +136,20 @@ const styles = {
     display: 'block',
   },
   leaderboardWrapper: {
-    marginTop: '20px',  // Minimal space after topBar
+    marginTop: '80px',  // Increase margin to push content below topBar
   },
+  topBar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '10px 20px',  // Add padding to ensure spacing
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    position: 'sticky',   // Ensure top bar stays fixed
+    top: 0,
+    backgroundColor: '#fff',
+    zIndex: 50,
+  },
+
   pageTitle: {
     fontSize: '2.5rem',
     marginBottom: '20px',
