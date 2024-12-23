@@ -50,7 +50,7 @@ function LeaderboardPage() {
   };
 
   return (
-    <div style={styles.container}>
+    <div>
       <header style={styles.header}>
         <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
 
@@ -92,10 +92,6 @@ function LeaderboardPage() {
 }
 
 const styles = {
-  container: {
-    textAlign: 'center',
-    paddingTop: '140px',  // Ensures content is fully below header
-  },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -104,7 +100,7 @@ const styles = {
     top: 0,
     left: 0,
     width: '100%',
-    height: '90px',  // Adjust header height
+    height: '80px',
     backgroundColor: 'white',
     zIndex: 1000,
     padding: '10px 20px',
@@ -140,16 +136,18 @@ const styles = {
     display: 'block',
   },
   userIcon: {
-    width: '50px',  // Slightly larger to avoid cutoff
+    width: '50px',
     height: '50px',
     borderRadius: '50%',
     marginLeft: '10px',
   },
   leaderboardWrapper: {
-    marginTop: '20px',
+    marginTop: '100px',  // Ensures content starts below header
+    textAlign: 'center',
+    paddingTop: '20px',  // Extra padding for breathing space
   },
   pageTitle: {
-    fontSize: '2rem',
+    fontSize: '2.5rem',
     marginBottom: '20px',
   },
   leaderboard: {
