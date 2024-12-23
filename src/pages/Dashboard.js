@@ -18,10 +18,9 @@ function Dashboard() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  // const [kidData, setKidData] = useState(null);  // Commented out to avoid eslint error
   // Suppress unused warning for now
-// eslint-disable-next-line no-unused-vars
-const [kidData, setKidData] = useState(null);
+  // eslint-disable-next-line no-unused-vars
+  const [kidData, setKidData] = useState(null);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -196,7 +195,6 @@ const [kidData, setKidData] = useState(null);
 }
 
 const styles = {
-  // Updated styles to fix card sizes, header alignment, and dropdown
   container: {
     textAlign: 'center',
     padding: '20px'
@@ -219,25 +217,39 @@ const styles = {
     cursor: 'pointer',
     marginRight: '20px'
   },
+  menuDropdown: {
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'absolute',
+    right: '10px',
+    top: '60px',
+    backgroundColor: 'white',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '8px',
+    zIndex: 10
+  },
+  menuItem: {
+    padding: '10px 20px',
+    textDecoration: 'none',
+    color: '#333'
+  },
   userIcon: {
     width: '40px',
     borderRadius: '50%',
   },
-  cardContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '20px'
+  toyBoxIcon: {
+    width: '150px',  // Resized to prevent huge display
+    cursor: 'pointer'
   },
-  card: {
-    width: '200px',
+  categoryItem: {
+    padding: '10px',
     cursor: 'pointer',
-    borderRadius: '10px',
-    overflow: 'hidden',
+    fontSize: '1.2rem',
+    transition: 'background-color 0.2s',
   },
-  kidImage: {
-    width: '100%',
-    height: 'auto',
-  },
+  categoryItemHover: {
+    backgroundColor: '#f0f0f0'
+  }
 };
 
 export default Dashboard;
