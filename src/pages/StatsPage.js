@@ -84,7 +84,6 @@ function StatsPage() {
         const docRef = doc(db, 'stars', selectedKid.name);
         const resetData = {};
 
-        // Reset categories to zero and clear history
         Object.keys(kidData).forEach((key) => {
           resetData[key] = key === 'history' ? [] : 0;
         });
@@ -92,7 +91,7 @@ function StatsPage() {
         try {
           await updateDoc(docRef, resetData);
           setKidData((prev) => ({ ...resetData }));
-          setChartData({});  // Reset the chart
+          setChartData({});
           console.log(`${selectedKid.name}'s stats have been reset.`);
         } catch (error) {
           console.error("Error resetting stats:", error);
@@ -173,7 +172,6 @@ function StatsPage() {
             <Bar data={chartData} options={{ responsive: true }} />
           </div>
 
-          {/* Clear All Stats Button */}
           <button onClick={clearAllStats} style={styles.clearButton}>
             Clear All Stats
           </button>
@@ -185,19 +183,47 @@ function StatsPage() {
 
 const styles = {
   container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '20px',
-    minHeight: '100vh'
+    textAlign: 'center',
+    padding: '20px'
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
-    padding: '10px 20px'
+    marginBottom: '20px'
+  },
+  rightSection: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  logo: {
+    width: '150px',  // Match Dashboard
+    height: 'auto'
+  },
+  menuIcon: {
+    fontSize: '2rem',
+    cursor: 'pointer',
+    marginRight: '20px'
+  },
+  userIcon: {
+    width: '40px',
+    borderRadius: '50%',
+  },
+  menuDropdown: {
+    position: 'absolute',
+    top: '50px',
+    right: '0',
+    backgroundColor: 'white',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    zIndex: 100
+  },
+  menuItem: {
+    padding: '12px 20px',
+    cursor: 'pointer',
+    textDecoration: 'none',
+    color: '#333',
+    display: 'block'
   },
   clearButton: {
     marginTop: '20px',
@@ -208,16 +234,6 @@ const styles = {
     borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '16px'
-  },
-  statsContainer: {
-    marginTop: '30px',
-    padding: '20px',
-    width: '80%',
-    maxWidth: '800px',
-    backgroundColor: '#fff',
-    borderRadius: '12px',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-    textAlign: 'center'
   }
 };
 
