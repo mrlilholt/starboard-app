@@ -71,19 +71,21 @@ function LeaderboardPage() {
         </div>
       </header>
 
-      <h1>🏆 Leaderboard 🏆</h1>
+      <div style={styles.leaderboardWrapper}>
+        <h1>🏆 Leaderboard 🏆</h1>
 
-      <div style={styles.leaderboard}>
-        {leaderboard.map((kid, index) => (
-          <div key={kid.id} style={styles.card}>
-            <img src={kid.image} alt={kid.name} style={styles.kidImage} />
-            <h2>{kid.name}</h2>
-            <p style={styles.starCount}>
-              {kid.totalStars} ⭐
-            </p>
-            {index === 0 && <p style={styles.leader}>🏅 Current Leader!</p>}
-          </div>
-        ))}
+        <div style={styles.leaderboard}>
+          {leaderboard.map((kid, index) => (
+            <div key={kid.id} style={styles.card}>
+              <img src={kid.image} alt={kid.name} style={styles.kidImage} />
+              <h2>{kid.name}</h2>
+              <p style={styles.starCount}>
+                {kid.totalStars} ⭐
+              </p>
+              {index === 0 && <p style={styles.leader}>🏅 Current Leader!</p>}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -92,13 +94,20 @@ function LeaderboardPage() {
 const styles = {
   container: {
     textAlign: 'center',
-    padding: '20px',
+    paddingTop: '100px',  // Add padding to prevent content cutoff
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '30px',
+    position: 'fixed',  // Keeps the header fixed like the dashboard
+    top: 0,
+    left: 0,
+    width: '100%',
+    backgroundColor: 'white',
+    zIndex: 1000,
+    padding: '10px 20px',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   },
   rightSection: {
     display: 'flex',
@@ -134,6 +143,9 @@ const styles = {
     height: '40px',
     borderRadius: '50%',
     marginLeft: '10px',
+  },
+  leaderboardWrapper: {
+    marginTop: '20px',
   },
   leaderboard: {
     display: 'flex',
