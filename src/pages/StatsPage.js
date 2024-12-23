@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { Bar } from 'react-chartjs-2';
+import 'chart.js/auto';
 
 const kids = [
   { id: 1, name: 'Mira' },
@@ -29,6 +30,9 @@ function StatsPage() {
           label: 'Cumulative Stars',
           data: cumulativeStars,
           backgroundColor: 'rgba(75, 192, 192, 0.6)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 2,
+          fill: true
         }
       ]
     });
@@ -46,7 +50,7 @@ function StatsPage() {
         setKidData(null);
       }
     }
-  }, [selectedKid, processCumulativeData]);  // Dependency Fixed
+  }, [selectedKid, processCumulativeData]);  
 
   // Real-time Listener
   useEffect(() => {
@@ -56,11 +60,13 @@ function StatsPage() {
         if (docSnap.exists()) {
           setKidData(docSnap.data());
           processCumulativeData(docSnap.data());
+        } else {
+          setKidData(null);
         }
       });
       return () => unsubscribe();
     }
-  }, [selectedKid, processCumulativeData]);  // Dependency Fixed
+  }, [selectedKid, processCumulativeData]);
 
   // Fetch stats on kid selection
   useEffect(() => {
@@ -82,11 +88,17 @@ function StatsPage() {
         ))}
       </div>
 
+      {selectedKid && !kidData && (
+        <p style={styles.noDataText}>No data available for {selectedKid.name} yet.</p>
+      )}
+
       {kidData && (
         <div style={styles.statsContainer}>
           <h2>{selectedKid.name}'s Stats</h2>
           <p>Total Stars: {kidData.history?.reduce((a, b) => a + b, 0)}</p>
-          <Bar data={chartData} />
+          <div style={styles.chartContainer}>
+            <Bar data={chartData} options={{ responsive: true }} />
+          </div>
         </div>
       )}
     </div>
@@ -99,22 +111,41 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '20px'
+    padding: '20px',
+    minHeight: '100vh'
   },
   kidButton: {
     margin: '10px',
-    padding: '10px 20px',
-    fontSize: '16px',
+    padding: '12px 24px',
+    fontSize: '18px',
     cursor: 'pointer',
     border: 'none',
     borderRadius: '8px',
     backgroundColor: '#007BFF',
-    color: 'white'
+    color: 'white',
+    transition: 'background-color 0.3s ease'
+  },
+  kidButtonHover: {
+    backgroundColor: '#0056b3'
   },
   statsContainer: {
     marginTop: '30px',
+    padding: '20px',
     width: '80%',
-    maxWidth: '800px'
+    maxWidth: '800px',
+    backgroundColor: '#fff',
+    borderRadius: '12px',
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+    textAlign: 'center'
+  },
+  chartContainer: {
+    marginTop: '20px',
+    height: '400px'
+  },
+  noDataText: {
+    marginTop: '20px',
+    fontSize: '18px',
+    color: '#666'
   }
 };
 
