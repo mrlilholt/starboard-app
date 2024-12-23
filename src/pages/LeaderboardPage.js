@@ -72,7 +72,7 @@ function LeaderboardPage() {
       </header>
 
       <div style={styles.leaderboardWrapper}>
-        <h1>🏆 Leaderboard 🏆</h1>
+        <h1 style={styles.pageTitle}>🏆 Leaderboard 🏆</h1>
 
         <div style={styles.leaderboard}>
           {leaderboard.map((kid, index) => (
@@ -94,7 +94,7 @@ function LeaderboardPage() {
 const styles = {
   container: {
     textAlign: 'center',
-    paddingTop: '120px',  // Increased padding to avoid cut-off
+    paddingTop: '140px',  // Ensures content is fully below header
   },
   header: {
     display: 'flex',
@@ -104,7 +104,7 @@ const styles = {
     top: 0,
     left: 0,
     width: '100%',
-    height: '80px',  // Match dashboard height
+    height: '90px',  // Adjust header height
     backgroundColor: 'white',
     zIndex: 1000,
     padding: '10px 20px',
@@ -125,7 +125,7 @@ const styles = {
   },
   menuDropdown: {
     position: 'absolute',
-    top: '50px',
+    top: '60px',
     right: '0',
     backgroundColor: 'white',
     borderRadius: '8px',
@@ -140,13 +140,17 @@ const styles = {
     display: 'block',
   },
   userIcon: {
-    width: '40px',
-    height: '40px',
+    width: '50px',  // Slightly larger to avoid cutoff
+    height: '50px',
     borderRadius: '50%',
     marginLeft: '10px',
   },
   leaderboardWrapper: {
     marginTop: '20px',
+  },
+  pageTitle: {
+    fontSize: '2rem',
+    marginBottom: '20px',
   },
   leaderboard: {
     display: 'flex',
@@ -157,15 +161,15 @@ const styles = {
   card: {
     width: '90%',
     maxWidth: '400px',
-    padding: '20px',
+    padding: '30px',
     borderRadius: '10px',
     boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
     textAlign: 'center',
     backgroundColor: '#fff',
   },
   kidImage: {
-    width: '100px',
-    height: '100px',
+    width: '120px',
+    height: '120px',
     borderRadius: '50%',
     marginBottom: '15px',
   },
