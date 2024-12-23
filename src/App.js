@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Dashboard from './pages/Dashboard';
 import LoginPage from './pages/LoginPage';
 import StatsPage from './pages/StatsPage';
+import AboutPage from './pages/About';  // Import AboutPage
+
 import { auth } from './firebase/firebase';
 import { useEffect, useState } from 'react';
 
@@ -35,6 +37,11 @@ function App() {
         <Route path="/stats" element={
           <PrivateRoute>
             <StatsPage />
+          </PrivateRoute>
+        } />
+        <Route path="/about" element={
+          <PrivateRoute>
+            <About />
           </PrivateRoute>
         } />
       </Routes>

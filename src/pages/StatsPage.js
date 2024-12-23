@@ -48,13 +48,46 @@ function StatsPage() {
       const docRef = doc(db, 'stars', selectedKid.name);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setKidData(docSnap.data());
-        processCumulativeData(docSnap.data());
+        const data = docSnap.data();
+        setKidData(data);
+  
+        // Recalculate Total Stars from Categories
+        const totalStars = Object.entries(data)
+          .filter(([key]) => key !== 'history')  // Exclude history from category calc
+          .reduce((acc, [_, value]) => acc + value, 0);
+  
+        // Process for Chart (Cumulative Graph)
+        const history = data.history || [];
+        const labels = history.map((_, index) => `Day ${index + 1}`);
+        
+        const cumulativeStars = history.reduce((acc, curr) => {
+          const total = acc.length ? acc[acc.length - 1] + curr : curr;
+          return [...acc, total];
+        }, []);
+  
+        // Add category totals to cumulative graph if missing
+        const latestTotal = cumulativeStars.length ? cumulativeStars[cumulativeStars.length - 1] : 0;
+        if (totalStars > latestTotal) {
+          cumulativeStars.push(totalStars);
+          labels.push(`Day ${labels.length + 1}`);
+        }
+  
+        setChartData({
+          labels,
+          datasets: [
+            {
+              label: 'Cumulative Stars',
+              data: cumulativeStars,
+              backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            }
+          ]
+        });
       } else {
         setKidData(null);
       }
     }
-  }, [selectedKid, processCumulativeData]);
+  }, [selectedKid]);
+  
 
   // Real-time Listener
   useEffect(() => {
