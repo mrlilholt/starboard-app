@@ -106,7 +106,9 @@ const [kidData, setKidData] = useState(null);
   };
 
   return (
-    <div style={styles.container}>
+    <div style={styles.modalWrapper}>
+  <div style={styles.modal}>
+   <div style={styles.container}>
       {/* Top Bar for Logo, Menu, and User Icon */}
       <div style={styles.topBar}>
         <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
@@ -192,6 +194,8 @@ const [kidData, setKidData] = useState(null);
         </div>
       )}
     </div>
+    </div>
+</div>
   );
 }
 
@@ -206,6 +210,25 @@ const styles = {
     alignItems: 'center',
     marginBottom: '20px'
   },
+  modalWrapper: {
+    maxHeight: '90vh',  // Ensures it doesn't exceed viewport height
+    overflowY: 'auto',  // Enables vertical scrolling
+    padding: '10px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modal: {
+    marginTop: '20px',
+    padding: '20px',
+    border: '1px solid #ccc',
+    borderRadius: '10px',
+    backgroundColor: 'white',
+    maxWidth: '600px',
+    width: '90%',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+  },
+  
   topBar: {
     display: 'flex',
     justifyContent: 'space-between',
