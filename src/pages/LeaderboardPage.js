@@ -50,26 +50,29 @@ function LeaderboardPage() {
   };
 
   return (
-    <div>
-      <header style={styles.header}>
+    <div style={styles.page}>
+      <div style={styles.topBar}>
         <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
-
         <div style={styles.rightSection}>
           <div style={styles.menuIcon} onClick={toggleMenu}>
             ☰
           </div>
-
-          {menuOpen && (
-            <div style={styles.menuDropdown}>
-              <Link to="/dashboard" style={styles.menuItem}>Dashboard</Link>
-              <Link to="/stats" style={styles.menuItem}>Stats</Link>
-              <Link to="/about" style={styles.menuItem}>About</Link>
-              <div style={styles.menuItem} onClick={logout}>Logout</div>
-            </div>
-          )}
-          <img src={auth.currentUser?.photoURL} alt="User" style={styles.userIcon} />
+          <img
+            src={auth.currentUser?.photoURL}
+            alt="User"
+            style={styles.userIcon}
+          />
         </div>
-      </header>
+      </div>
+
+      {menuOpen && (
+        <div style={styles.menuDropdown}>
+          <Link to="/dashboard" style={styles.menuItem}>Dashboard</Link>
+          <Link to="/stats" style={styles.menuItem}>Stats</Link>
+          <Link to="/about" style={styles.menuItem}>About</Link>
+          <div style={styles.menuItem} onClick={logout}>Logout</div>
+        </div>
+      )}
 
       <div style={styles.leaderboardWrapper}>
         <h1 style={styles.pageTitle}>🏆 Leaderboard 🏆</h1>
@@ -92,37 +95,38 @@ function LeaderboardPage() {
 }
 
 const styles = {
-  header: {
+  page: {
+    textAlign: 'center',
+    padding: '20px',
+  },
+  topBar: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '80px',
-    backgroundColor: 'white',
-    zIndex: 1000,
-    padding: '10px 20px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    marginBottom: '40px',
+  },
+  logo: {
+    width: '120px',
   },
   rightSection: {
     display: 'flex',
     alignItems: 'center',
-    position: 'relative',
-  },
-  logo: {
-    width: '120px',
   },
   menuIcon: {
     fontSize: '2rem',
     cursor: 'pointer',
     marginRight: '10px',
   },
+  userIcon: {
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%',
+    marginLeft: '10px',
+  },
   menuDropdown: {
     position: 'absolute',
-    top: '60px',
-    right: '0',
+    top: '80px',
+    right: '10px',
     backgroundColor: 'white',
     borderRadius: '8px',
     boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
@@ -135,16 +139,8 @@ const styles = {
     color: '#333',
     display: 'block',
   },
-  userIcon: {
-    width: '50px',
-    height: '50px',
-    borderRadius: '50%',
-    marginLeft: '10px',
-  },
   leaderboardWrapper: {
-    marginTop: '100px',  // Ensures content starts below header
-    textAlign: 'center',
-    paddingTop: '20px',  // Extra padding for breathing space
+    marginTop: '20px',  // Minimal space after topBar
   },
   pageTitle: {
     fontSize: '2.5rem',
