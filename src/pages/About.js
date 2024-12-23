@@ -5,6 +5,8 @@ function AboutPage() {
   const navigate = useNavigate();
 
   return (
+    <div style={styles.modalOverlay}>
+  <div style={styles.modal}></div>
     <div style={styles.container}>
       <header style={styles.header}>
         <h1>About Starboard</h1>
@@ -28,6 +30,7 @@ function AboutPage() {
         Back to Dashboard
       </button>
     </div>
+    </div>
   );
 }
 
@@ -41,6 +44,30 @@ const styles = {
     textAlign: 'center',
     padding: '20px'
   },
+  modalOverlay: {
+    position: 'fixed',   
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',  // Dim the background
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflowY: 'auto',  
+    zIndex: 1000,
+  },
+  modal: {
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    width: '90%',
+    maxWidth: '600px',
+    maxHeight: '90vh',  
+    padding: '20px',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+    overflowY: 'auto',  
+  },
+  
   header: {
     marginBottom: '30px'
   },
