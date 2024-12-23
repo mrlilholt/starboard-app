@@ -18,7 +18,7 @@ function Dashboard() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [kidData, setKidData] = useState(null);
+  // const [kidData, setKidData] = useState(null);  // Commented out to avoid eslint error
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
