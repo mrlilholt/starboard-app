@@ -18,7 +18,10 @@ function Dashboard() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [kidData, setKidData] = useState(null);
+  // const [kidData, setKidData] = useState(null);  // Commented out to avoid eslint error
+  // Suppress unused warning for now
+// eslint-disable-next-line no-unused-vars
+const [kidData, setKidData] = useState(null);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -142,27 +145,30 @@ function Dashboard() {
       {selectedKid && (
         <div style={styles.modal}>
           <h2>Rate {selectedKid.name}</h2>
-          <img
-            src="/toybox-icon.png"
-            alt="Select Category"
-            style={styles.toyBoxIcon}
-            onClick={() => setShowCategories(!showCategories)}
-          />
-          {showCategories && (
-            <div style={styles.categoryDropdown}>
-              {categories.map((cat) => (
-                <div
-                  key={cat}
-                  style={styles.categoryItem}
-                  onClick={() => setActiveCategory(cat)}>
-                  {cat}
+
+          <div>
+            <img
+              src="/toybox-icon.png"
+              alt="Select Category"
+              style={styles.toyBoxIcon}
+              onClick={() => setShowCategories(!showCategories)}
+            />
+            {showCategories && (
+              <div style={styles.categoryDropdown}>
+                {categories.map((cat) => (
+                  <div
+                    key={cat}
+                    style={styles.categoryItem}
+                    onClick={() => setActiveCategory(cat)}>
+                    {cat}
+                  </div>
+                ))}
+                <div style={styles.addCategory} onClick={handleAddCategory}>
+                  + Add Category
                 </div>
-              ))}
-              <div style={styles.addCategory} onClick={handleAddCategory}>
-                + Add Category
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {activeCategory && (
             <div>
@@ -188,7 +194,6 @@ function Dashboard() {
     </div>
   );
 }
-
 
 const styles = {
   container: {
