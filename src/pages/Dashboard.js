@@ -19,7 +19,9 @@ function Dashboard() {
   const [showCategories, setShowCategories] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   // const [kidData, setKidData] = useState(null);  // Commented out to avoid eslint error
-  const [kidData, setKidData] = useState(null);  // This was missing
+  // Suppress unused warning for now
+// eslint-disable-next-line no-unused-vars
+const [kidData, setKidData] = useState(null);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
