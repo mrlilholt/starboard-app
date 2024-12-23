@@ -133,6 +133,18 @@ function StatsPage() {
         <div style={styles.statsContainer}>
           <h2>{selectedKid.name}'s Stats</h2>
           <p>Total Stars: {kidData.history?.reduce((a, b) => a + b, 0)}</p>
+
+          {/* Render Stars by Category */}
+          <div style={styles.categoryStats}>
+            {Object.entries(kidData)
+              .filter(([key]) => key !== 'history')  // Exclude the history field
+              .map(([category, stars]) => (
+                <p key={category} style={styles.categoryItem}>
+                  {category}: {stars} ⭐
+                </p>
+              ))}
+          </div>
+
           <div style={styles.chartContainer}>
             <Bar data={chartData} options={{ responsive: true }} />
           </div>
@@ -209,6 +221,14 @@ const styles = {
     borderRadius: '12px',
     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
     textAlign: 'center'
+  },
+  categoryStats: {
+    marginTop: '20px',
+    textAlign: 'left'
+  },
+  categoryItem: {
+    fontSize: '18px',
+    margin: '10px 0'
   }
 };
 
