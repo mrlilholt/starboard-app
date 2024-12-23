@@ -18,10 +18,7 @@ function Dashboard() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  // const [kidData, setKidData] = useState(null);  // Commented out to avoid eslint error
-  // Suppress unused warning for now
-// eslint-disable-next-line no-unused-vars
-const [kidData, setKidData] = useState(null);
+  const [kidData, setKidData] = useState(null);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -107,31 +104,30 @@ const [kidData, setKidData] = useState(null);
 
   return (
     <div style={styles.container}>
-      <header style={styles.header}>
+      {/* Top Bar for Logo, Menu, and User Icon */}
+      <div style={styles.topBar}>
         <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
-
         <div style={styles.rightSection}>
           <div style={styles.menuIcon} onClick={toggleMenu}>
             ☰
           </div>
-
-          {menuOpen && (
-            <div style={styles.menuDropdown}>
-              <Link to="/dashboard" style={styles.menuItem}>Dashboard</Link>
-              <Link to="/stats" style={styles.menuItem}>Stats</Link>
-              <Link to="/about" style={styles.menuItem}>About</Link>
-              <Link to="/leaderboard" style={styles.menuItem}>Leaderboard</Link>
-              <div style={styles.menuItem} onClick={logout}>Logout</div>
-            </div>
-          )}
-
           <img
             src={auth.currentUser?.photoURL}
             alt="User"
             style={styles.userIcon}
           />
         </div>
-      </header>
+      </div>
+
+      {menuOpen && (
+        <div style={styles.menuDropdown}>
+          <Link to="/dashboard" style={styles.menuItem}>Dashboard</Link>
+          <Link to="/stats" style={styles.menuItem}>Stats</Link>
+          <Link to="/about" style={styles.menuItem}>About</Link>
+          <Link to="/leaderboard" style={styles.menuItem}>Leaderboard</Link>
+          <div style={styles.menuItem} onClick={logout}>Logout</div>
+        </div>
+      )}
 
       <h1>Rate Your Child's Behavior</h1>
       <div style={styles.cardContainer}>
@@ -146,30 +142,27 @@ const [kidData, setKidData] = useState(null);
       {selectedKid && (
         <div style={styles.modal}>
           <h2>Rate {selectedKid.name}</h2>
-
-          <div>
-            <img
-              src="/toybox-icon.png"
-              alt="Select Category"
-              style={styles.toyBoxIcon}
-              onClick={() => setShowCategories(!showCategories)}
-            />
-            {showCategories && (
-              <div style={styles.categoryDropdown}>
-                {categories.map((cat) => (
-                  <div
-                    key={cat}
-                    style={styles.categoryItem}
-                    onClick={() => setActiveCategory(cat)}>
-                    {cat}
-                  </div>
-                ))}
-                <div style={styles.addCategory} onClick={handleAddCategory}>
-                  + Add Category
+          <img
+            src="/toybox-icon.png"
+            alt="Select Category"
+            style={styles.toyBoxIcon}
+            onClick={() => setShowCategories(!showCategories)}
+          />
+          {showCategories && (
+            <div style={styles.categoryDropdown}>
+              {categories.map((cat) => (
+                <div
+                  key={cat}
+                  style={styles.categoryItem}
+                  onClick={() => setActiveCategory(cat)}>
+                  {cat}
                 </div>
+              ))}
+              <div style={styles.addCategory} onClick={handleAddCategory}>
+                + Add Category
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {activeCategory && (
             <div>
@@ -196,6 +189,7 @@ const [kidData, setKidData] = useState(null);
   );
 }
 
+
 const styles = {
   container: {
     textAlign: 'center',
@@ -206,6 +200,12 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: '20px'
+  },
+  topBar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '40px',
   },
   rightSection: {
     display: 'flex',
