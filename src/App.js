@@ -3,6 +3,8 @@ import Dashboard from './pages/Dashboard';
 import LoginPage from './pages/LoginPage';
 import StatsPage from './pages/StatsPage';
 import AboutPage from './pages/About';  // Import AboutPage
+import LeaderboardPage from './pages/LeaderboardPage';  // Import the LeaderboardPage
+
 
 import { auth } from './firebase/firebase';
 import { useEffect, useState } from 'react';
@@ -44,7 +46,11 @@ function App() {
     <AboutPage />
   </PrivateRoute>
 } />
-
+<Route path="/leaderboard" element={
+  <PrivateRoute>
+    <LeaderboardPage />
+  </PrivateRoute>
+} />
       </Routes>
     </Router>
   );

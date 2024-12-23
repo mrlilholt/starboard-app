@@ -157,6 +157,7 @@ function StatsPage() {
               <Link to="/dashboard" style={styles.menuItem}>Dashboard</Link>
               <Link to="/stats" style={styles.menuItem}>Stats</Link>
               <Link to="/about" style={styles.menuItem}>About</Link>
+              <Link to="/leaderboard" style={styles.menuItem}>Leaderboard</Link>
               <div style={styles.menuItem} onClick={logout}>Logout</div>
             </div>
           )}
