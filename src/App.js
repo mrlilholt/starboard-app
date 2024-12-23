@@ -40,10 +40,11 @@ function App() {
           </PrivateRoute>
         } />
         <Route path="/about" element={
-          <PrivateRoute>
-            <About />
-          </PrivateRoute>
-        } />
+  <PrivateRoute>
+    <AboutPage />
+  </PrivateRoute>
+} />
+
       </Routes>
     </Router>
   );
