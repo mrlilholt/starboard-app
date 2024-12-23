@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
@@ -42,7 +42,7 @@ function StatsPage() {
     });
   }, []);
 
-  // Fetch Stats (Memoized)
+  // Fetch Stats
   const fetchStats = useCallback(async () => {
     if (selectedKid) {
       const docRef = doc(db, 'stars', selectedKid.name);
@@ -54,7 +54,7 @@ function StatsPage() {
         setKidData(null);
       }
     }
-  }, [selectedKid, processCumulativeData]);  
+  }, [selectedKid, processCumulativeData]);
 
   // Real-time Listener
   useEffect(() => {
@@ -75,6 +75,31 @@ function StatsPage() {
   useEffect(() => {
     fetchStats();
   }, [fetchStats]);
+
+  // Reset Stats for Selected Kid
+  const clearAllStats = async () => {
+    if (selectedKid) {
+      const confirmClear = window.confirm(`Are you sure you want to reset all stats for ${selectedKid.name}?`);
+      if (confirmClear) {
+        const docRef = doc(db, 'stars', selectedKid.name);
+        const resetData = {};
+
+        // Reset categories to zero and clear history
+        Object.keys(kidData).forEach((key) => {
+          resetData[key] = key === 'history' ? [] : 0;
+        });
+
+        try {
+          await updateDoc(docRef, resetData);
+          setKidData((prev) => ({ ...resetData }));
+          setChartData({});  // Reset the chart
+          console.log(`${selectedKid.name}'s stats have been reset.`);
+        } catch (error) {
+          console.error("Error resetting stats:", error);
+        }
+      }
+    }
+  };
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -134,10 +159,9 @@ function StatsPage() {
           <h2>{selectedKid.name}'s Stats</h2>
           <p>Total Stars: {kidData.history?.reduce((a, b) => a + b, 0)}</p>
 
-          {/* Render Stars by Category */}
           <div style={styles.categoryStats}>
             {Object.entries(kidData)
-              .filter(([key]) => key !== 'history')  // Exclude the history field
+              .filter(([key]) => key !== 'history')
               .map(([category, stars]) => (
                 <p key={category} style={styles.categoryItem}>
                   {category}: {stars} ⭐
@@ -148,6 +172,11 @@ function StatsPage() {
           <div style={styles.chartContainer}>
             <Bar data={chartData} options={{ responsive: true }} />
           </div>
+
+          {/* Clear All Stats Button */}
+          <button onClick={clearAllStats} style={styles.clearButton}>
+            Clear All Stats
+          </button>
         </div>
       )}
     </div>
@@ -170,47 +199,15 @@ const styles = {
     width: '100%',
     padding: '10px 20px'
   },
-  rightSection: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  logo: {
-    width: '150px'
-  },
-  menuIcon: {
-    fontSize: '2rem',
-    cursor: 'pointer',
-    marginRight: '20px'
-  },
-  menuDropdown: {
-    position: 'absolute',
-    top: '60px',
-    right: '10px',
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    zIndex: 100
-  },
-  menuItem: {
-    padding: '12px 20px',
-    cursor: 'pointer',
-    textDecoration: 'none',
-    color: '#333',
-    display: 'block'
-  },
-  userIcon: {
-    width: '40px',
-    borderRadius: '50%'
-  },
-  kidButton: {
-    margin: '10px',
+  clearButton: {
+    marginTop: '20px',
     padding: '12px 24px',
-    fontSize: '18px',
-    cursor: 'pointer',
+    backgroundColor: '#FF0000',
+    color: 'white',
     border: 'none',
     borderRadius: '8px',
-    backgroundColor: '#007BFF',
-    color: 'white'
+    cursor: 'pointer',
+    fontSize: '16px'
   },
   statsContainer: {
     marginTop: '30px',
@@ -221,14 +218,6 @@ const styles = {
     borderRadius: '12px',
     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
     textAlign: 'center'
-  },
-  categoryStats: {
-    marginTop: '20px',
-    textAlign: 'left'
-  },
-  categoryItem: {
-    fontSize: '18px',
-    margin: '10px 0'
   }
 };
 
