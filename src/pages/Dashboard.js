@@ -106,8 +106,8 @@ const [kidData, setKidData] = useState(null);
   };
 
   return (
-    <div style={styles.modalWrapper}>
-  <div style={styles.modal}>
+<div style={styles.modalOverlay}>
+<div style={styles.modal}>
    <div style={styles.container}>
       {/* Top Bar for Logo, Menu, and User Icon */}
       <div style={styles.topBar}>
@@ -210,23 +210,28 @@ const styles = {
     alignItems: 'center',
     marginBottom: '20px'
   },
-  modalWrapper: {
-    maxHeight: '90vh',  // Ensures it doesn't exceed viewport height
-    overflowY: 'auto',  // Enables vertical scrolling
-    padding: '10px',
+  modalOverlay: {
+    position: 'fixed',   // Keeps it in place
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',  // Dim the background
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    overflowY: 'auto',  // Allow scrolling within the modal
+    zIndex: 1000,
   },
   modal: {
-    marginTop: '20px',
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '10px',
     backgroundColor: 'white',
-    maxWidth: '600px',
+    borderRadius: '10px',
     width: '90%',
+    maxWidth: '600px',
+    maxHeight: '90vh',  // Keeps it within the viewport
+    padding: '20px',
     boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+    overflowY: 'auto',  // Scroll within the modal if it overflows
   },
   
   topBar: {
