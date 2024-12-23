@@ -144,7 +144,7 @@ function StatsPage() {
 
   return (
     <div style={styles.modalOverlay}>
-  <div style={styles.modal}></div>
+  <div style={styles.modal}>
     <div style={styles.container}>
       <header style={styles.header}>
         <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
@@ -215,6 +215,7 @@ function StatsPage() {
           </button>
         </div>
       )}
+    </div>
     </div>
     </div>
   );

@@ -6,7 +6,7 @@ function AboutPage() {
 
   return (
     <div style={styles.modalOverlay}>
-  <div style={styles.modal}></div>
+<div style={styles.modal}>
     <div style={styles.container}>
       <header style={styles.header}>
         <h1>About Starboard</h1>
@@ -29,6 +29,7 @@ function AboutPage() {
       <button onClick={() => navigate('/dashboard')} style={styles.backButton}>
         Back to Dashboard
       </button>
+    </div>
     </div>
     </div>
   );

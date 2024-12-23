@@ -51,7 +51,7 @@ function LeaderboardPage() {
 
   return (
     <div style={styles.modalOverlay}>
-  <div style={styles.modal}></div>
+<div style={styles.modal}>
     <div style={styles.page}>
       <div style={styles.topBar}>
         <img src="/STARBOARD.gif" alt="Starboard Logo" style={styles.logo} />
@@ -92,6 +92,7 @@ function LeaderboardPage() {
           ))}
         </div>
       </div>
+    </div>
     </div>
     </div>
   );
