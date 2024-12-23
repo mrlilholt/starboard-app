@@ -94,16 +94,17 @@ function LeaderboardPage() {
 const styles = {
   container: {
     textAlign: 'center',
-    paddingTop: '100px',  // Add padding to prevent content cutoff
+    paddingTop: '120px',  // Increased padding to avoid cut-off
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    position: 'fixed',  // Keeps the header fixed like the dashboard
+    position: 'fixed',
     top: 0,
     left: 0,
     width: '100%',
+    height: '80px',  // Match dashboard height
     backgroundColor: 'white',
     zIndex: 1000,
     padding: '10px 20px',
@@ -120,7 +121,7 @@ const styles = {
   menuIcon: {
     fontSize: '2rem',
     cursor: 'pointer',
-    marginRight: '20px',
+    marginRight: '10px',
   },
   menuDropdown: {
     position: 'absolute',
