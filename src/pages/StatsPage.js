@@ -189,7 +189,9 @@ function StatsPage() {
       {kidData && (
         <div style={styles.statsContainer}>
           <h2>{selectedKid.name}'s Stats</h2>
-          <p>Total Stars: {kidData.history?.reduce((a, b) => a + b, 0)}</p>
+          <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
+  Total Stars: {Object.values(kidData).reduce((acc, val) => typeof val === 'number' ? acc + val : acc, 0)}
+</p>
 
           <div style={styles.categoryStats}>
             {Object.entries(kidData)
