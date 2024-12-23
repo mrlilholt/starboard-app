@@ -288,17 +288,6 @@ const styles = {
     width: '100%',
     height: 'auto',
   },
-  modal: {
-    marginTop: '20px',
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '10px',
-    backgroundColor: 'white',
-    maxWidth: '600px',
-    width: '90%',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-    overflowY: 'auto',
-  },
   toyBoxIcon: {
     width: '120px',  // Shrink icon size
     cursor: 'pointer',
