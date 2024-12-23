@@ -18,9 +18,10 @@ function Dashboard() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [showCategories, setShowCategories] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // const [kidData, setKidData] = useState(null);  // Commented out to avoid eslint error
   // Suppress unused warning for now
-  // eslint-disable-next-line no-unused-vars
-  const [kidData, setKidData] = useState(null);
+// eslint-disable-next-line no-unused-vars
+const [kidData, setKidData] = useState(null);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -217,6 +218,10 @@ const styles = {
     cursor: 'pointer',
     marginRight: '20px'
   },
+  userIcon: {
+    width: '40px',
+    borderRadius: '50%',
+  },
   menuDropdown: {
     display: 'flex',
     flexDirection: 'column',
@@ -229,26 +234,78 @@ const styles = {
     zIndex: 10
   },
   menuItem: {
-    padding: '10px 20px',
+    padding: '12px 20px',
     textDecoration: 'none',
-    color: '#333'
+    color: '#333',
+    fontSize: '1rem'
   },
-  userIcon: {
-    width: '40px',
-    borderRadius: '50%',
+  // Add spacing between menu items
+  menuItemSpacing: {
+    marginBottom: '10px'
+  },
+  cardContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '20px'
+  },
+  card: {
+    width: '200px',
+    cursor: 'pointer',
+    borderRadius: '10px',
+    overflow: 'hidden',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+  },
+  kidImage: {
+    width: '100%',
+    height: 'auto',
+  },
+  modal: {
+    marginTop: '20px',
+    padding: '20px',
+    border: '1px solid #ccc',
+    borderRadius: '10px',
+    backgroundColor: 'white',
+    maxWidth: '600px',
+    width: '90%',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+    overflowY: 'auto',
   },
   toyBoxIcon: {
-    width: '150px',  // Resized to prevent huge display
-    cursor: 'pointer'
+    width: '120px',  // Shrink icon size
+    cursor: 'pointer',
+    marginTop: '10px'
+  },
+  categoryDropdown: {
+    marginTop: '10px',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    padding: '10px',
+    backgroundColor: '#f9f9f9'
   },
   categoryItem: {
-    padding: '10px',
+    padding: '12px',
     cursor: 'pointer',
-    fontSize: '1.2rem',
-    transition: 'background-color 0.2s',
+    fontSize: '1.1rem',
+    transition: 'background-color 0.3s ease'
   },
+  // Highlight category on hover
   categoryItemHover: {
-    backgroundColor: '#f0f0f0'
+    backgroundColor: '#efefef'
+  },
+  saveButton: {
+    marginTop: '20px',
+    padding: '12px 24px',
+    backgroundColor: '#007BFF',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '1rem'
+  },
+  largeStar: {
+    fontSize: '2.5rem',
+    cursor: 'pointer',
+    margin: '0 5px'
   }
 };
 
